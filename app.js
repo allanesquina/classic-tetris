@@ -1,6 +1,6 @@
 // Config
 let game = new Game('stage', 500, 300, 15);
-let playField = new GameZone(game.context, {currentPiece: { type: 'T', rotate: 0, x: 3, y: 1 }});
+let playField = new GameZone(game.context, {currentPiece: { type: 'T', rotate: 0, x: 3, y: -1 }});
 
 // Creating the pieces
 let p = [];
