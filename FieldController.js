@@ -5,6 +5,20 @@ class FieldController extends GameObject {
     this.types = [`T`, `O`, `I`, `S`, `Z`, `L`, `J`];
     this.interval = null;
     this.paused = false;
+    this.audioRotate = new Audio('audio/rotate.wav');
+    this.audioMove = new Audio('audio/move.wav');
+    this.audioDrop = new Audio('audio/drop.ogg');
+    this.audioLineSingle = new Audio('audio/single.ogg');
+    this.audioLineDouble = new Audio('audio/double.ogg');
+    this.audioLineTriple = new Audio('audio/triple.ogg');
+    this.audioLineTetris = new Audio('audio/tetris.ogg');
+    this.audioRotate.volume = .4;
+    this.audioMove.volume = .2;
+    this.audioDrop.volume = .5;
+    this.audioLineSingle.volume = .5;
+    this.audioLineDouble.volume = .5;
+    this.audioLineTriple.volume = .5;
+    this.audioLineTetris.volume = .5;
   }
 
   _createMatrix() {
@@ -170,6 +184,25 @@ class FieldController extends GameObject {
   _startRemoveLinesFromMatrixAnimation() {
     this.paused = true;
     this.isRemovingLines = true;
+    switch (this.linesToBeRemoved.length) {
+      case 1:
+        this.audioLineSingle.currentTime = 0;
+        this.audioLineSingle.play();
+        break;
+      case 2:
+        this.audioLineDouble.currentTime = 0;
+        this.audioLineDouble.play();
+        break;
+      case 3:
+        this.audioLineTriple.currentTime = 0;
+        this.audioLineTriple.play();
+        break;
+      case 4:
+        this.audioLineTetris.currentTime = 0;
+        this.audioLineTetris.play();
+        break;
+      default:
+    }
   }
 
   _validateScore() {
@@ -257,7 +290,7 @@ class FieldController extends GameObject {
     const oldCurrentPiecePosition = game.state.currentPiece;
     type = type || this.types[getRandomInt(0, 4)];
     let down = false;
-
+    let audio = this.audioMove;
 
     if (e) {
       // >
@@ -277,10 +310,18 @@ class FieldController extends GameObject {
       // up
       if (e.keyCode === 38 || e.keyCode === 75) {
         rotate = rotate === 3 ? 0 : rotate + 1;
+        audio = this.audioRotate;
       }
     } else {
       y = y + 1;
       down = true;
+      audio = null;
+    }
+
+    // Play audio effect
+    if(audio) {
+      audio.currentTime = 0;
+      audio.play();
     }
 
     game.setState({
@@ -298,6 +339,8 @@ class FieldController extends GameObject {
       this._pushToMatrix(oldCurrentPiecePosition);
       this._validateScore();
       this._newPiece(game);
+      this.audioDrop.currentTime = 0;
+      this.audioDrop.play();
       return;
     }
 
@@ -314,6 +357,8 @@ class FieldController extends GameObject {
       this._pushToMatrix(oldCurrentPiecePosition);
       this._validateScore();
       this._newPiece(game);
+      this.audioDrop.currentTime = 0;
+      this.audioDrop.play();
       return;
     }
 
