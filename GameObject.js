@@ -25,14 +25,15 @@ class GameObject {
         break;
       case 'text':
         // ctx.clearRect(this.lastProps.x, this.lastProps.y, 200, 200);
+        ctx.fillStyle = this.props.color || '#fff';
         ctx.font = this.props.font;
         ctx.fillText(this.props.text, this.props.x, this.props.y);
         break;
       case 'sprite':
-        const { w, h, x, y } = this.props;
+        const { w, h, x, y, sw, sh } = this.props;
         ctx.drawImage(
           this.sprite,
-          this.props.sx, 0, w, h,
+          this.props.sx, 0, sw, sh,
           x, y, w, h
         );
         this.props.sx = this.props.sx > w ? 0 : this.props.sx + w;
