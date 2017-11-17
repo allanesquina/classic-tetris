@@ -1,2 +1,2 @@
 # classic tetris
-coming soon 
+## DEMO https://allanesquina.github.io/classic-tetris/
