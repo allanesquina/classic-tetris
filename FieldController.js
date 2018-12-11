@@ -1,7 +1,24 @@
+const throttle = (func, limit) => {
+    let inThrottle
+    return function() {
+        const args = arguments
+        const context = this
+        if (!inThrottle) {
+              func.apply(context, args)
+              inThrottle = true
+          setTimeout(() => inThrottle = false, limit)
+            }
+      }
+  }
+
 class FieldController extends GameObject {
-  constructor(props) {
+  constructor(props, game) {
     super(props);
-    this._createMatrix();
+
+    this.props = props;
+    this.props.matrix = this._createMatrix(10, 22);
+    this.props.matrixNext = this._createMatrix(4, 6);
+
     this.types = [`T`, `O`, `I`, `S`, `Z`, `L`, `J`];
     this.interval = null;
     this.paused = false;
@@ -19,16 +36,27 @@ class FieldController extends GameObject {
     this.audioLineDouble.volume = .5;
     this.audioLineTriple.volume = .5;
     this.audioLineTetris.volume = .5;
+
+    this._handleNextPiece(game);
+
+    this.delayBlock150 = throttle((cb) => {
+      cb();
+    }, 150);
+
+    this.delayBlock50 = throttle((cb) => {
+      cb();
+    }, 50);
   }
 
-  _createMatrix() {
-    this.props.matrix = [];
-    for (let i = 0, l = 22; i < l; i++) {
-      for (let j = 0, y = 10; j < y; j++) {
-        this.props.matrix[i] = this.props.matrix[i] || [];
-        this.props.matrix[i][j] = { filled: 0 };
+  _createMatrix(width, height) {
+    let matrix = [];
+    for (let i = 0, l = height ; i < l; i++) {
+      for (let j = 0, y = width; j < y; j++) {
+        matrix[i] = matrix[i] || [];
+        matrix[i][j] = { filled: 0 };
       }
     }
+    return matrix;
   }
 
   _getPiece({ x, y, type, rotate }) {
@@ -91,6 +119,7 @@ class FieldController extends GameObject {
             this.paused = false;
             this.isRemovingLines = false;
             this._changeScore(this.linesToBeRemoved.length, game);
+            this._updateLines(this.linesToBeRemoved.length, game);
           } else {
             this.currentPixel++;
           }
@@ -103,6 +132,11 @@ class FieldController extends GameObject {
         this._movePiece(null, game)
       }
     }
+  }
+  _updateLines(linesNumber, game) {
+    let lines = parseInt(game.state.lines);
+    lines = lines + linesNumber;
+    game.setState({lines});
   }
 
   _changeScore(linesNumber, game) {
@@ -244,36 +278,64 @@ class FieldController extends GameObject {
     return 'bypass';
   }
 
-  _removeFromMatrix(p) {
+  _removeFromMatrix(p, matrix = this.props.matrix) {
     for (let i = 0, l = p.length; i < l; i++) {
-      if (this.props.matrix[p[i][0]] && this.props.matrix[p[i][0]][p[i][1]]) {
-        this.props.matrix[p[i][0]][p[i][1]].filled = 0;
+      if (matrix[p[i][0]] && matrix[p[i][0]][p[i][1]]) {
+        matrix[p[i][0]][p[i][1]].filled = 0;
       }
     }
   }
 
-  _pushToMatrix(piece) {
+  _pushToMatrix(piece, matrix = this.props.matrix) {
     const p = this._getPiece(piece);
     for (let i = 0, l = p.length; i < l; i++) {
-      if (this.props.matrix[p[i][0]] && this.props.matrix[p[i][0]][p[i][1]]) {
-        this.props.matrix[p[i][0]][p[i][1]].filled = 1;
-        this.props.matrix[p[i][0]][p[i][1]].type = piece.type;
+      if (matrix[p[i][0]] && matrix[p[i][0]][p[i][1]]) {
+        matrix[p[i][0]][p[i][1]].filled = 1;
+        matrix[p[i][0]][p[i][1]].type = piece.type;
       }
     }
   }
 
-  onKeyDown(e, game) {
-    this._movePiece(e, game);
+  onKeyDown(keys, game) {
+    if(keys.isPressed) {
+      this._movePiece(keys, game);
+    }
   }
 
-  _newPiece(game) {
-    const piece = { type: this.types[getRandomInt(0, this.types.length)], rotate: 0, x: 3, y: 0 };
+  _randomPiece() {
+    return { type: this.types[getRandomInt(0, this.types.length)], rotate: 0, x: 0, y: 0 };
+  }
+
+  _handleNextPiece(game) {
+    this.nextPiece = this.nextPiece || this._randomPiece();
+    const piece = this.nextPiece;
+
+
+    this.nextPiece.x = 1;
+    this.nextPiece.y = 1;
+
+    this._removeFromMatrix(this._getPiece(this.nextPiece), this.props.matrixNext);
+
+    this.nextPiece = this._randomPiece();
+
+    this.nextPiece.x = 1;
+    this.nextPiece.y = 1;
+
+    this._pushToMatrix(this.nextPiece, this.props.matrixNext);
+
+    piece.x = 4;
+    piece.y = -1;
 
     game.setState({
       currentPiece: piece,
       oldCurrentPiecePosition: piece,
+      matrixNext: Object.assign(this.props.matrixNext),
       matrix: Object.assign(this.props.matrix)
     });
+  }
+
+  _newPiece(game) {
+    this._handleNextPiece(game);
 
     const validateResult = this._validate(game);
 
@@ -283,7 +345,7 @@ class FieldController extends GameObject {
     }
   }
 
-  _movePiece(e, game) {
+  _movePiece(keys, game) {
     if (this.paused) return false;
 
     let {y, x, rotate, type} = game.state.currentPiece;
@@ -292,25 +354,29 @@ class FieldController extends GameObject {
     let down = false;
     let audio = this.audioMove;
 
-    if (e) {
-      // >
-      if (e.keyCode === 76 || e.keyCode === 39) {
-        x = x + 1;
-      }
+    if (keys) {
+      this.delayBlock50(() => {
+        // >
+        if (keys[76] || keys[39]) {
+          x = x + 1;
+        }
 
-      // <
-      if (e.keyCode === 72 || e.keyCode === 37) {
-        x = x - 1;
-      }
-      // down or space
-      if (e.keyCode === 74 || e.keyCode === 32 || e.keyCode === 40) {
-        y = y + 1;
-        down = true;
-      }
+        // <
+        if (keys[72] || keys[37]) {
+          x = x - 1;
+        }
+        // down or space
+        if (keys[74] || keys[32] || keys[40]) {
+          y = y + 1;
+          down = true;
+        }
+      });
       // up
-      if (e.keyCode === 38 || e.keyCode === 75) {
-        rotate = rotate === 3 ? 0 : rotate + 1;
-        audio = this.audioRotate;
+      if (keys[38] || keys[75]) {
+        this.delayBlock150(() => {
+          rotate = rotate === 3 ? 0 : rotate + 1;
+          audio = this.audioRotate;
+        });
       }
     } else {
       y = y + 1;
@@ -321,7 +387,7 @@ class FieldController extends GameObject {
     // Play audio effect
     if(audio) {
       audio.currentTime = 0;
-      audio.play();
+      // audio.play();
     }
 
     game.setState({

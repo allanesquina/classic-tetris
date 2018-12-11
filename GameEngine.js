@@ -3,9 +3,6 @@ class Game {
     this.canvas = document.getElementById(id || 'stage');
     this.context = this.canvas.getContext('2d');
     this.lastTime = Date.now() / 1000;
-    this.lastTimeEvent1 = Date.now() / 1000;
-    this.lastTimeEvent2 = Date.now() / 1000;
-    this.lastTimeEvent3 = Date.now() / 1000;
     this.state = {
       stage: {
         height: h,
@@ -13,6 +10,7 @@ class Game {
         frameSkip
       }
     };
+    this.pressedKeys = { count: 0 };
 
     this.render = this.render.bind(this);
     this.walkThroughGameObjects = this.walkThroughGameObjects.bind(this);
@@ -33,15 +31,13 @@ class Game {
 
   bindEvents() {
     document.addEventListener('keydown', (e) => {
-        this.walkThroughGameObjects((obj, i) => {
-          (obj.onKeyDown && obj.onKeyDown(e, this.getGameEventObject()));
-        });
+      this.pressedKeys[e.keyCode] = e;
+      this.pressedKeys.isPressed = true;
     });
 
     document.addEventListener('keyup', (e) => {
-        this.walkThroughGameObjects((obj, i) => {
-          (obj.onKeyUp && obj.onKeyUp(e, this.getGameEventObject()));
-        });
+      this.pressedKeys[e.keyCode] = false;
+      this.pressedKeys.isPressed = false;
     });
   }
 
@@ -55,14 +51,15 @@ class Game {
   }
 
   render() {
+    // const fps = 0.013; // 60fps;
+    const fps = 0.017; ;
     const time = Date.now() / 1000;
-    if (time > this.lastTime + 0.013) {
-      this.zone.addGameObjectIndexes();
-      this.zone.removeGameObjectIndexes();
+    if (time > this.lastTime + fps) {
       this.lastTime = time;
       this.context.clearRect(0, 0, this.state.stage.width, this.state.stage.height);
       this.walkThroughGameObjects((obj, i) => {
         (obj.stateToProp && obj.stateToProp(this.getGameEventObject()));
+        (obj.onKeyDown && obj.onKeyDown(this.pressedKeys, this.getGameEventObject()));
         (obj.onEnterFrame && obj.onEnterFrame(this.getGameEventObject()));
         obj.render(this.context, this.state);
         (obj.onCollision && obj.onCollision(this.collisionCalc(obj, i), this.getGameEventObject()));
@@ -73,24 +70,12 @@ class Game {
   }
 
   walkThroughGameObjects(fn) {
-    const gameIndexes = this.zone.objectsIndexes;
-    const gameIndexesLength = this.zone.objectsIndexesLength;
     const objs = this.zone.objs;
-    const margin = 1999;
-    let i = 0;
-    let j = 0;
-    let n = 0;
 
-    for (; j < gameIndexesLength; i += 1) {
-      const obj = objs[gameIndexes[i]];
+    for (let i=0, l = objs.length; i < l; i += 1) {
+      const obj = objs[i];
       if (obj) {
-        fn(obj, i, j, n);
-        j++;
-      } else {
-        n++;
-        if(n >= margin) {
-          j++;
-        }
+        fn(obj, i);
       }
     }
   }

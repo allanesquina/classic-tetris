@@ -1,15 +1,8 @@
 class GameZone {
   constructor(context, initialState) {
     this.state = initialState || {};
-    this.objs = {};
-    this.objectsIndexes = new Array(20000);
-    this.objectsIndexesLength = 0;
-    this.objectsIndexesToChange = new Array(200);
-    this.objectsIndexesToChangeLength = 0;
-    this.objectsIndexesToAdd = new Array(200);
-    this.objectsIndexesToAddLength = 0;
+    this.objs = [];
     this.connect = this.connect.bind(this);
-    this.availableKeysCount = 0;
     this.context = context;
     this.renderIsRunning = false;
     // this.a = new Audio('audio/music1.ogg');
@@ -18,28 +11,11 @@ class GameZone {
   }
 
   connect(gameObject) {
-    const index = this.getNextAvailableIndex();
-    if (this.renderIsRunning) {
-      this.objectsIndexesToAdd[this.objectsIndexesToAddLength++] = { index, gameObject };
-    } else {
-      this.objs[index] = gameObject;
-      this.objectsIndexes[index] = index;
-      this.objectsIndexesLength += 1;
-    }
+    const index = this.objs.push(gameObject);
+
     gameObject.setDisconnectFn(() => {
-      this.objectsIndexesToChange[this.objectsIndexesToChangeLength++] = index;
+      this.objs.splice(index-1, 1);
     }, this.context);
-  }
-
-
-  getNextAvailableIndex() {
-    const indexes = this.objectsIndexes;
-    const l = indexes.length;
-    for (let i = 1; i < l; i++) {
-      if (!indexes[i]) {
-          return i;
-      }
-    }
   }
 
   setState(newState) {
@@ -49,29 +25,4 @@ class GameZone {
       }
     }
   }
-
-  removeGameObjectIndexes() {
-    const indexes = this.objectsIndexesToChange;
-    const l = this.objectsIndexesToChangeLength;
-    for (let i = 0; i < l; i++) {
-      delete this.objs[indexes[i]];
-      this.objectsIndexes[indexes[i]] = undefined;
-      this.objectsIndexesLength -= 1;
-    }
-    this.objectsIndexesToChangeLength = 0;
-  }
-
-  addGameObjectIndexes() {
-    const indexes = this.objectsIndexesToAdd;
-    const l = this.objectsIndexesToAddLength;
-    for (let i = 0; i < l; i++) {
-      const {index, gameObject } = indexes[i];
-      this.objs[index] = gameObject;
-      this.objectsIndexes[index] = index;
-      this.objectsIndexesLength += 1;
-    }
-    this.objectsIndexesToAddLength = 0;
-  }
-
-
 }

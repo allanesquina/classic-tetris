@@ -3,7 +3,8 @@ class Pixel extends GameObject {
     super(props);
     this.props = props;
     let colors = [];
-    colors['black'] = 107;
+    // colors['black'] = 107;
+    colors['black'] = 210;
     colors['T'] = 0;
     colors['O'] = 7;
     colors['I'] = 14;
@@ -14,15 +15,9 @@ class Pixel extends GameObject {
     this.colors = colors;
   }
 
-  onKeyDown(e, game) {
-    if (game.state.matrix && game.state.matrix[this.props.refY] && game.state.matrix[this.props.refY][this.props.refX]) {
-      // console.log(this.props.name, game.state.matrix[this.props.refY][this.props.refX].filled);
-    }
-  }
-
   onEnterFrame(game) {
-    if (game.state.matrix && game.state.matrix[this.props.refY] && game.state.matrix[this.props.refY][this.props.refX]) {
-      const pos = game.state.matrix[this.props.refY][this.props.refX];
+    if (this.props.matrix && this.props.matrix[this.props.refY] && this.props.matrix[this.props.refY][this.props.refX]) {
+      const pos = this.props.matrix[this.props.refY][this.props.refX];
       this.props.sx = pos.filled > 0 ? this.colors[pos.type] : this.colors['black'];
     }
   }

@@ -1,33 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Game</title>
   <style media="screen">
+  * {
+	padding: 0;
+	margin: 0;
+  }
     body  {
       background: #000;
       color: #777;
       font-family: Arial;
       font-size: 12px;
+      overflow: hidden;
     }
     a {
       color: #999;
     }
     canvas {
       margin: 0 auto;
-      border: 1px solid #444;
       display: block;
-      background:#111;
+      z-index: 10;
+      width: 100%;
+      position: relative;
     }
     .info {
       text-align: center;
     }
+    .controls {
+      position: fixed;
+      z-index: 100;
+      bottom: 0;
+	    text-align: center;
+      width: 100%;
+      background: #17132a;
+    }
+    .button {
+      line-height: 50px;
+      width: 22%;
+      height: 50px;
+      margin: auto;
+      display: inline-block;
+      background: #18132b;
+      color: #4c4761;
+        user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -o-user-select: none;
+    }
+    .canvas-template {
+	    position: relative;
+      width: 100%;
+    }
+    .info-wrapper {
+      position: absolute;
+      right: 0;
+      width: 43%;
+      height: 100%;
+      z-index: 0;
+      border-left: .1rem solid #292440;
+      background: #18132b;
+    }
+    .info-score, .info-lines, .info-level, .info-next{
+      width: 60%;
+      margin: 0 auto 9%;
+      height: 10%;
+      padding: 13%;
+      border-radius: 5%;
+      background: #000000;
+    }
+    .info-title {
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body>
-  <canvas width="500" height="500" id="stage"></canvas>
+	<div class="canvas-template">
+		<div class="info-wrapper">
+			<div class="info-score">
+        <span class="info-title">Score</span>
+      </div>
+			<div class="info-next">
+        <span class="info-title">Next</span>
+      </div>
+			<div class="info-lines">
+        <span class="info-title">Lines</span>
+      </div>
+			<div class="info-level">
+        <span class="info-title">Level</span>
+      </div>
+		</div>
+  		<canvas width="300" height="400" id="stage"></canvas>
+	</div>
   <div class="info">
   </div>
+  <div class="controls">
+	  <div data-key="72" class="button"> < </div>
+	  <div data-key="76" class="button"> > </div>
+	  <div data-key="74" class="button"> 0 </div>
+	  <div data-key="38" class="button"> r </div>
+  </div>
+  <script src="hammer.min.js" charset="utf-8"></script>
   <script src="Utils.js" charset="utf-8"></script>
   <script src="GameEngine.js" charset="utf-8"></script>
   <script src="GameZone.js" charset="utf-8"></script>
