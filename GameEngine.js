@@ -51,8 +51,8 @@ class Game {
   }
 
   render() {
-    // const fps = 0.013; // 60fps;
-    const fps = 0.017; ;
+    const fps = 0.013; // 60fps;
+    // const fps = 0.017; ;
     const time = Date.now() / 1000;
     if (time > this.lastTime + fps) {
       this.lastTime = time;
@@ -91,7 +91,6 @@ class Game {
       }
     }
   }
-
 
   collisionCalc(target, index) {
     let out = [];

@@ -5,6 +5,7 @@ let playField = new GameZone(game.context, {
   lines: `0`, 
   level: `0`, 
   matrix: [],
+  control: { down: false },
 });
 
 function createPiecesArea(playField) {
@@ -13,10 +14,13 @@ function createPiecesArea(playField) {
   let spriteSize = 7;
   let pw = spriteSize * 2.0;
   let border = 3;
+  let matrixHeight;
+  let matrixWidth;
+
   for (let i = 0, l = 22; i < l; i++) {
     for (let j = 0, y = 10; j < y; j++) {
       playField.connect(new Pixel({
-        name: `Piece-${i}-${j}`,
+        name: `Piece-${i+2}-${j}`,
         type: 'sprite',
         sprite: `img/sprite2.png`,
         sw: spriteSize,
@@ -26,12 +30,35 @@ function createPiecesArea(playField) {
         w: pw,
         h: pw,
         refX: j,
-        refY: i,
+        refY: i+2,
         matrix: playField.state.matrix,
         sx: 0
       }));
+
+      // Used to create lines at the bottom of the matrix
+      matrixHeight = 0 + (i * ((pw + border))) + (pw + border);
+      matrixWidth = 0 + (j * (pw + border)) + pw;
     }
   }
+
+  // Create a line at the bottom of the matrix
+  playField.connect(new GameObject({
+    type: 'rect',
+    color: '#000',
+    x: 0,
+    y: matrixHeight,
+    w: matrixWidth,
+    h: 2
+  }))
+
+  playField.connect(new GameObject({
+    type: 'rect',
+    color: '#0c0c0c',
+    x: 0,
+    y: matrixHeight + 2,
+    w: matrixWidth,
+    h: 140
+  }))
 }
 
 function createNextPiecesArea(playField) {
@@ -49,7 +76,7 @@ function createNextPiecesArea(playField) {
         sw: spriteSize,
         sh: spriteSize,
         x: 210 + (j * (pw + border)),
-        y: 110 + (i * (pw + border)),
+        y: 120 + (i * (pw + border)),
         w: pw,
         h: pw,
         refX: j,
@@ -82,7 +109,7 @@ let lines = new Lines({
   color: `#fff`,
   font: `25px Arial`,
   x: 200,
-  y: 225
+  y: 245
 })
 
 let level = new Level({
@@ -91,7 +118,7 @@ let level = new Level({
   color: `#fff`,
   font: `25px Arial`,
   x: 200,
-  y: 310
+  y: 340
 })
 
 var myElement = document.getElementById('stage');
@@ -133,6 +160,7 @@ buttons.forEach((button) => {
     game.pressedKeys[key] = false;
     game.pressedKeys.isPressed = false;
   });
+
   // button.addEventListener('touchstart', (e) => {
   //   var key = e.target.getAttribute('data-key');
   //   game.pressedKeys[key] = e;

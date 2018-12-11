@@ -16,7 +16,7 @@ class FieldController extends GameObject {
     super(props);
 
     this.props = props;
-    this.props.matrix = this._createMatrix(10, 22);
+    this.props.matrix = this._createMatrix(10, 24);
     this.props.matrixNext = this._createMatrix(4, 6);
 
     this.types = [`T`, `O`, `I`, `S`, `Z`, `L`, `J`];
@@ -35,13 +35,13 @@ class FieldController extends GameObject {
     this.audioLineSingle.volume = .5;
     this.audioLineDouble.volume = .5;
     this.audioLineTriple.volume = .5;
-    this.audioLineTetris.volume = .5;
+    this.audioLineTetris.volume = .5
 
-    this._handleNextPiece(game);
+    this._newPiece(game);
 
     this.delayBlock150 = throttle((cb) => {
-      cb();
-    }, 150);
+      cb()
+    }, 80);
 
     this.delayBlock50 = throttle((cb) => {
       cb();
@@ -107,6 +107,13 @@ class FieldController extends GameObject {
   }
 
   onEnterFrame(game) {
+    if(this.isPushing) {
+        this._movePiece(null, game)
+        this._movePiece(null, game)
+        this._movePiece(null, game)
+        return;
+    }
+
     if (this.paused) {
       if (this.isRemovingLines) {
         if (Date.now() % 2 === 0) {
@@ -183,7 +190,7 @@ class FieldController extends GameObject {
 
   _validateLineScore() {
     let lines = [];
-    for (let i = 0, l = 22; i < l; i++) {
+    for (let i = 0, l = 24; i < l; i++) {
       let line = 0;
       for (var j = 0, y = 10; j < y; j++) {
         line = this.props.matrix[i][j].filled > 0 ? line + 1 : line;
@@ -265,6 +272,7 @@ class FieldController extends GameObject {
       if (!this.props.matrix[p[i][0]][p[i][1]]) {
         return 'out';
       }
+
       // if the piece has collided with another piece
       if (this.props.matrix[p[i][0]][p[i][1]].filled > 0 && down) {
         return 'colision';
@@ -282,6 +290,7 @@ class FieldController extends GameObject {
     for (let i = 0, l = p.length; i < l; i++) {
       if (matrix[p[i][0]] && matrix[p[i][0]][p[i][1]]) {
         matrix[p[i][0]][p[i][1]].filled = 0;
+        delete matrix[p[i][0]][p[i][1]].type;
       }
     }
   }
@@ -324,7 +333,7 @@ class FieldController extends GameObject {
     this._pushToMatrix(this.nextPiece, this.props.matrixNext);
 
     piece.x = 4;
-    piece.y = -1;
+    piece.y = 0;
 
     game.setState({
       currentPiece: piece,
@@ -335,6 +344,10 @@ class FieldController extends GameObject {
   }
 
   _newPiece(game) {
+    if(this.isPushing) {
+      this.isPushing = false;
+    }
+
     this._handleNextPiece(game);
 
     const validateResult = this._validate(game);
@@ -342,10 +355,21 @@ class FieldController extends GameObject {
     if (validateResult === 'colision') {
       this.paused = true;
       console.log(`gameover`);
+      return
     }
+
+    // this._pushToMatrix(game.state.currentPiece);
+    // this._updateGameMatrix()
+  }
+
+  _updateGameMatrix() {
+    game.setState({
+      matrix: Object.assign(this.props.matrix)
+    });
   }
 
   _movePiece(keys, game) {
+
     if (this.paused) return false;
 
     let {y, x, rotate, type} = game.state.currentPiece;
@@ -365,10 +389,13 @@ class FieldController extends GameObject {
         if (keys[72] || keys[37]) {
           x = x - 1;
         }
+
         // down or space
         if (keys[74] || keys[32] || keys[40]) {
-          y = y + 1;
+          // y = y + 1;
+          this.isPushing = true;
           down = true;
+          return;
         }
       });
       // up
@@ -379,22 +406,23 @@ class FieldController extends GameObject {
         });
       }
     } else {
-      y = y + 1;
-      down = true;
-      audio = null;
+        const velocity = this.isPushing ? 1 : 1;
+        y = y + velocity;
+        down = true;
+        audio = null;
     }
 
     // Play audio effect
     if(audio) {
       audio.currentTime = 0;
-      // audio.play();
+      audio.play();
     }
 
     game.setState({
       control: { down },
       currentPiece: { type, rotate, x, y },
       oldCurrentPiecePosition,
-      matrix: Object.assign(this.props.matrix)
+      // matrix: Object.assign(this.props.matrix)
     });
 
     this._removeFromMatrix(this._getPiece(game.state.oldCurrentPiecePosition));
@@ -435,8 +463,6 @@ class FieldController extends GameObject {
       });
       return;
     }
-    game.setState({
-      matrix: Object.assign(this.props.matrix)
-    });
+
   }
 }

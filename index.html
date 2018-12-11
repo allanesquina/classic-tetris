@@ -9,8 +9,23 @@
 	padding: 0;
 	margin: 0;
   }
+  @-webkit-keyframes canvasbg {
+    0%{background-position:64% 40%}
+    50%{background-position:37% 100%}
+    100%{background-position:64% 40%}
+}
+@-moz-keyframes canvasbg {
+    0%{background-position:64% 40%}
+    50%{background-position:37% 100%}
+    100%{background-position:64% 40%}
+}
+@keyframes canvasbg { 
+    0%{background-position:64% 40%}
+    50%{background-position:37% 100%}
+    100%{background-position:64% 40%}
+}
     body  {
-      background: #000;
+      background: #0c0a1a;
       color: #777;
       font-family: Arial;
       font-size: 12px;
@@ -35,7 +50,7 @@
       bottom: 0;
 	    text-align: center;
       width: 100%;
-      background: #17132a;
+      background: #0d0a1b;
     }
     .button {
       line-height: 50px;
@@ -43,7 +58,6 @@
       height: 50px;
       margin: auto;
       display: inline-block;
-      background: #18132b;
       color: #4c4761;
         user-select: none;
         -moz-user-select: none;
@@ -52,28 +66,41 @@
         -o-user-select: none;
     }
     .canvas-template {
+      background: #000;
+      background: linear-gradient(174deg, #111129, #000000);
+      background-size: 400% 400%;
+
+      -webkit-animation: canvasbg 17s ease infinite;
+      -moz-animation: canvasbg 17s ease infinite;
+      animation: canvasbg 17s ease infinite;
+
 	    position: relative;
       width: 100%;
+      max-width: 500px;
+      margin: auto;
     }
     .info-wrapper {
       position: absolute;
       right: 0;
-      width: 43%;
+      width: 44%;
       height: 100%;
       z-index: 0;
       border-left: .1rem solid #292440;
-      background: #18132b;
+      /* background: #18132b; */
     }
     .info-score, .info-lines, .info-level, .info-next{
-      width: 60%;
       margin: 0 auto 9%;
-      height: 10%;
-      padding: 13%;
-      border-radius: 5%;
-      background: #000000;
+      height: 15%;
+      padding: 10%;
+      border-bottom: 2px solid #292440;
     }
+
+    .info-level {
+      border: none;
+    }
+
     .info-title {
-      font-size: 1rem;
+      font-size: 4vw;
     }
   </style>
 </head>
@@ -93,7 +120,7 @@
         <span class="info-title">Level</span>
       </div>
 		</div>
-  		<canvas width="300" height="400" id="stage"></canvas>
+  		<canvas width="300" height="375" id="stage"></canvas>
 	</div>
   <div class="info">
   </div>
