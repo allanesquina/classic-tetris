@@ -10,17 +10,17 @@
 	margin: 0;
   }
   @-webkit-keyframes canvasbg {
-    0%{background-position:64% 40%}
+    0%{background-position:64% 30%}
     50%{background-position:37% 100%}
     100%{background-position:64% 40%}
 }
 @-moz-keyframes canvasbg {
-    0%{background-position:64% 40%}
+    0%{background-position:64% 30%}
     50%{background-position:37% 100%}
     100%{background-position:64% 40%}
 }
 @keyframes canvasbg { 
-    0%{background-position:64% 40%}
+    0%{background-position:64% 30%}
     50%{background-position:37% 100%}
     100%{background-position:64% 40%}
 }
@@ -54,7 +54,7 @@
     }
     .button {
       line-height: 50px;
-      width: 22%;
+      width: 19%;
       height: 50px;
       margin: auto;
       display: inline-block;
@@ -78,11 +78,12 @@
       width: 100%;
       max-width: 500px;
       margin: auto;
+      padding-left: 1%;
     }
     .info-wrapper {
       position: absolute;
       right: 0;
-      width: 44%;
+      width: 42%;
       height: 100%;
       z-index: 0;
       border-left: .1rem solid #292440;
@@ -127,7 +128,8 @@
   <div class="controls">
 	  <div data-key="72" class="button"> < </div>
 	  <div data-key="76" class="button"> > </div>
-	  <div data-key="74" class="button"> 0 </div>
+	  <div data-key="74" class="button"> V </div>
+	  <div data-key="32" class="button"> 0 </div>
 	  <div data-key="38" class="button"> r </div>
   </div>
   <script src="hammer.min.js" charset="utf-8"></script>

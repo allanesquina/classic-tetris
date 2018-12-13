@@ -11,6 +11,159 @@ const throttle = (func, limit) => {
       }
   }
 
+const pieces = [];
+    pieces['T'] = [
+      [ 
+        [0,1,0],
+        [1,1,1],
+        [0,0,0],
+      ],
+      [ 
+        [0,1,0],
+        [0,1,1],
+        [0,1,0],
+      ],
+      [ 
+        [0,0,0],
+        [1,1,1],
+        [0,1,0],
+      ],
+      [ 
+        [0,1,0],
+        [1,1,0],
+        [0,1,0],
+      ],
+    ];
+
+    pieces['O'] = [
+      [ 
+        [1,1],
+        [1,1],
+      ],
+    ];
+    pieces['O'][1] = pieces['O'][0]
+    pieces['O'][2] = pieces['O'][0]
+    pieces['O'][3] = pieces['O'][0]
+
+    pieces['I'] = [
+      [ 
+        [0,0,0,0],
+        [1,1,1,1],
+        [0,0,0,0],
+        [0,0,0,0],
+      ],
+      [ 
+        [0,0,1,0],
+        [0,0,1,0],
+        [0,0,1,0],
+        [0,0,1,0],
+      ],
+      [ 
+        [0,0,0,0],
+        [0,0,0,0],
+        [1,1,1,1],
+        [0,0,0,0],
+      ],
+      [ 
+        [0,1,0,0],
+        [0,1,0,0],
+        [0,1,0,0],
+        [0,1,0,0],
+      ],
+    ];
+
+    pieces['S'] = [
+      [ 
+        [0,1,1],
+        [1,1,0],
+        [0,0,0],
+      ],
+      [ 
+        [0,1,0],
+        [0,1,1],
+        [0,0,1],
+      ],
+      [ 
+        [0,0,0],
+        [0,1,1],
+        [1,1,0],
+      ],
+      [ 
+        [1,0,0],
+        [1,1,0],
+        [0,1,0],
+      ],
+    ];
+
+    pieces['Z'] = [
+      [ 
+        [1,1,0],
+        [0,1,1],
+        [0,0,0],
+      ],
+      [ 
+        [0,0,1],
+        [0,1,1],
+        [0,1,0],
+      ],
+      [ 
+        [0,0,0],
+        [1,1,0],
+        [0,1,1],
+      ],
+      [ 
+        [0,1,0],
+        [1,1,0],
+        [1,0,0],
+      ],
+    ];
+
+    pieces['L'] = [
+      [ 
+        [0,0,1],
+        [1,1,1],
+        [0,0,0],
+      ],
+      [ 
+        [0,1,0],
+        [0,1,0],
+        [0,1,1],
+      ],
+      [ 
+        [0,0,0],
+        [1,1,1],
+        [1,0,0],
+      ],
+      [ 
+        [1,1,0],
+        [0,1,0],
+        [0,1,0],
+      ],
+    ];
+
+    pieces['J'] = [
+      [ 
+        [1,0,0],
+        [1,1,1],
+        [0,0,0],
+      ],
+      [ 
+        [0,1,1],
+        [0,1,0],
+        [0,1,0],
+      ],
+      [ 
+        [0,0,0],
+        [1,1,1],
+        [0,0,1],
+      ],
+      [ 
+        [0,1,0],
+        [0,1,0],
+        [1,1,0],
+      ],
+    ];
+
 class FieldController extends GameObject {
   constructor(props, game) {
     super(props);
@@ -18,7 +171,7 @@ class FieldController extends GameObject {
     this.props = props;
     this.props.matrix = this._createMatrix(10, 24);
     this.props.matrixNext = this._createMatrix(4, 6);
-
+    this.tab_probability = [1, 1, 1, 1, 1, 1, 1];
     this.types = [`T`, `O`, `I`, `S`, `Z`, `L`, `J`];
     this.interval = null;
     this.paused = false;
@@ -37,15 +190,17 @@ class FieldController extends GameObject {
     this.audioLineTriple.volume = .5;
     this.audioLineTetris.volume = .5
 
+    this.currentLevel = 1;
+
     this._newPiece(game);
 
     this.delayBlock150 = throttle((cb) => {
       cb()
-    }, 80);
+    }, 120);
 
     this.delayBlock50 = throttle((cb) => {
       cb();
-    }, 50);
+    }, 60);
   }
 
   _createMatrix(width, height) {
@@ -60,53 +215,11 @@ class FieldController extends GameObject {
   }
 
   _getPiece({ x, y, type, rotate }) {
-    let pieces = [];
-    pieces['T'] = [];
-    pieces['T'][0] = [[y, x], [y + 1, x - 1], [y + 1, x], [y + 1, x + 1]];
-    pieces['T'][1] = [[y, x - 1], [y + 1, x - 1], [y + 1, x], [y + 2, x - 1]];
-    pieces['T'][2] = [[y, x - 1], [y, x], [y, x + 1], [y + 1, x]];
-    pieces['T'][3] = [[y, x + 1], [y + 1, x], [y + 1, x + 1], [y + 2, x + 1]];
-
-    pieces['O'] = [];
-    pieces['O'][0] = [[y, x], [y, x + 1], [y + 1, x], [y + 1, x + 1]];
-    pieces['O'][1] = pieces['O'][0];
-    pieces['O'][2] = pieces['O'][0];
-    pieces['O'][3] = pieces['O'][0];
-
-    pieces['I'] = [];
-    pieces['I'][0] = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
-    pieces['I'][1] = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
-    pieces['I'][2] = pieces['I'][0];
-    pieces['I'][3] = pieces['I'][1];
-
-    pieces['S'] = [];
-    pieces['S'][0] = [[y, x], [y, x + 1], [y + 1, x - 1], [y + 1, x]];
-    pieces['S'][1] = [[y, x], [y + 1, x], [y + 1, x + 1], [y + 2, x + 1]];
-    pieces['S'][2] = pieces['S'][0];
-    pieces['S'][3] = pieces['S'][1];
-
-    pieces['Z'] = [];
-    pieces['Z'][0] = [[y, x], [y, x - 1], [y + 1, x], [y + 1, x + 1]];
-    pieces['Z'][1] = [[y, x], [y + 1, x], [y + 1, x - 1], [y + 2, x - 1]];
-    pieces['Z'][2] = pieces['Z'][0];
-    pieces['Z'][3] = pieces['Z'][1];
-
-    pieces['L'] = [];
-    pieces['L'][0] = [[y, x], [y, x - 1], [y, x + 1], [y + 1, x - 1]];
-    pieces['L'][1] = [[y, x], [y, x - 1], [y + 1, x], [y + 2, x]];
-    pieces['L'][2] = [[y, x + 1], [y + 1, x], [y + 1, x - 1], [y + 1, x + 1]];
-    pieces['L'][3] = [[y, x], [y + 1, x], [y + 2, x], [y + 2, x + 1]];
-
-    pieces['J'] = [];
-    pieces['J'][0] = [[y, x], [y, x - 1], [y, x + 1], [y + 1, x + 1]];
-    pieces['J'][1] = [[y, x], [y + 1, x], [y + 2, x], [y + 2, x - 1]];
-    pieces['J'][2] = [[y, x - 1], [y + 1, x], [y + 1, x - 1], [y + 1, x + 1]];
-    pieces['J'][3] = [[y, x], [y, x + 1], [y + 1, x], [y + 2, x]];
-
     return pieces[type][rotate];
   }
 
   onEnterFrame(game) {
+
     if(this.isPushing) {
         this._movePiece(null, game)
         this._movePiece(null, game)
@@ -125,8 +238,9 @@ class FieldController extends GameObject {
             this.currentPixel = 0;
             this.paused = false;
             this.isRemovingLines = false;
-            this._changeScore(this.linesToBeRemoved.length, game);
+            this._updateScore(this.linesToBeRemoved.length, game);
             this._updateLines(this.linesToBeRemoved.length, game);
+            this._updateLevel(game);
           } else {
             this.currentPixel++;
           }
@@ -134,34 +248,56 @@ class FieldController extends GameObject {
         }
       }
     } else {
-      if (!this.interval) {
-        this.interval = setInterval(() => this._movePiece(null, game), 500);
+      const time = Date.now() / 1000;
+
+      const gVelocity = Math.pow((0.8-((this.currentLevel-1)*0.007)),this.currentLevel-1)
+
+      if (time > this.lastTime + gVelocity) {
+        this.lastTime = time;
         this._movePiece(null, game)
       }
     }
   }
+
+  _updateLevel(game) {
+    let lines = parseInt(game.state.lines);
+    let level = parseInt(game.state.level);
+    const limit = 10;
+
+    const newLevel = +(lines / limit).toString().split('.')[0];
+    game.setState({level: newLevel || 1});
+    this.currentLevel = newLevel;
+  }
+
   _updateLines(linesNumber, game) {
     let lines = parseInt(game.state.lines);
     lines = lines + linesNumber;
     game.setState({lines});
   }
 
-  _changeScore(linesNumber, game) {
+  _updateScore(linesNumber, game) {
     let score = parseInt(game.state.score);
+    let level = parseInt(game.state.level);
     switch(linesNumber) {
       case 1:
-        score += 1000;
+        score += 40 * (level + 1);
         break;
       case 2:
-        score += 2000;
+        score += 100 * (level + 1);
         break;
       case 3:
-        score += 3000;
+        score += 300 * (level + 1);
         break;
       case 4:
-        score += 4000;
+        score += 1200 * (level + 1);
         break;
-        default:
+      case 10:
+        score += 2 * (level + 1);
+        break;
+      case 15:
+        score += 1 * (level + 1);
+        break;
+      default:
         break;
     }
 
@@ -186,6 +322,29 @@ class FieldController extends GameObject {
   }
 
   onKeyPress(e, game) {
+  }
+
+  _getRandom () {
+    // find random number according to probability
+    var rand = Math.random()*7;
+    var stop = 0;
+    rand -= this.tab_probability[stop];
+    while (rand > 0) {
+      stop++;
+      if (stop > 6) {
+        break;
+      };
+      rand -= this.tab_probability[stop];
+    }
+    // redistribute probability
+    var to_distribute = this.tab_probability[stop] * .5;
+    this.tab_probability[stop] *=  .5;
+    for (var j = 0; j < 7; j++) {
+      if (j != stop) {
+        this.tab_probability[j] += to_distribute / 6;
+      };
+    }
+    return stop;
   }
 
   _validateLineScore() {
@@ -255,52 +414,54 @@ class FieldController extends GameObject {
   }
 
   _validate(game) {
-    const p = this._getPiece(game.state.currentPiece);
+    const piece = game.state.currentPiece;
+    const p = this._getPiece(piece);
     const { down } = game.state.control;
 
     for (let i = 0, l = p.length; i < l; i++) {
-      if (!this.props.matrix[p[i][0]]) {
-        return 'out-down';
-      }
+      for (let j = 0, l2 = p[i].length; j < l2; j++) {
+        if(p[i][j] > 0) {
+          // matrix[piece.y + i][piece.x + j] = { filled: 1, type: piece.type}
 
-      // if the piece is out of the view port y
-      if (!this.props.matrix[p[i][0]][p[i][1]]) {
-        return 'out';
-      }
+          if (!this.props.matrix[piece.y + i]) {
+            return 'out-down';
+          }
 
-      // if the piece is out of the view port X
-      if (!this.props.matrix[p[i][0]][p[i][1]]) {
-        return 'out';
-      }
+          if (!this.props.matrix[piece.y + i][piece.x + j]) {
+            return 'out-wall';
+          }
 
-      // if the piece has collided with another piece
-      if (this.props.matrix[p[i][0]][p[i][1]].filled > 0 && down) {
-        return 'colision';
-      }
+          if (this.props.matrix[piece.y + i][piece.x + j].filled > 0 && down) {
+            return 'colision';
+          }
 
-      if (this.props.matrix[p[i][0]][p[i][1]].filled > 0 && !down) {
-        return 'out';
+          if (this.props.matrix[piece.y + i][piece.x + j].filled > 0 && !down) {
+            return 'out';
+          }
+        }
       }
     }
 
-    return 'bypass';
+    return 'bypass'
   }
 
-  _removeFromMatrix(p, matrix = this.props.matrix) {
+  _removeFromMatrix(piece, matrix = this.props.matrix) {
+    const p = this._getPiece(piece);
     for (let i = 0, l = p.length; i < l; i++) {
-      if (matrix[p[i][0]] && matrix[p[i][0]][p[i][1]]) {
-        matrix[p[i][0]][p[i][1]].filled = 0;
-        delete matrix[p[i][0]][p[i][1]].type;
+      for (let j = 0, l2 = p[i].length; j < l2; j++) {
+        if(p[i][j] > 0) {
+          matrix[piece.y + i][piece.x + j] = { filled: 0 };
+        }
       }
     }
   }
-
   _pushToMatrix(piece, matrix = this.props.matrix) {
     const p = this._getPiece(piece);
     for (let i = 0, l = p.length; i < l; i++) {
-      if (matrix[p[i][0]] && matrix[p[i][0]][p[i][1]]) {
-        matrix[p[i][0]][p[i][1]].filled = 1;
-        matrix[p[i][0]][p[i][1]].type = piece.type;
+      for (let j = 0, l2 = p[i].length; j < l2; j++) {
+        if(p[i][j] > 0) {
+          matrix[piece.y + i][piece.x + j] = { filled: 1, type: piece.type}
+        }
       }
     }
   }
@@ -312,7 +473,7 @@ class FieldController extends GameObject {
   }
 
   _randomPiece() {
-    return { type: this.types[getRandomInt(0, this.types.length)], rotate: 0, x: 0, y: 0 };
+    return { type: this.types[this._getRandom()], rotate: 0, x: 0, y: 0 };
   }
 
   _handleNextPiece(game) {
@@ -323,7 +484,7 @@ class FieldController extends GameObject {
     this.nextPiece.x = 1;
     this.nextPiece.y = 1;
 
-    this._removeFromMatrix(this._getPiece(this.nextPiece), this.props.matrixNext);
+    this._removeFromMatrix(this.nextPiece, this.props.matrixNext);
 
     this.nextPiece = this._randomPiece();
 
@@ -333,7 +494,7 @@ class FieldController extends GameObject {
     this._pushToMatrix(this.nextPiece, this.props.matrixNext);
 
     piece.x = 4;
-    piece.y = 0;
+    piece.y = 1;
 
     game.setState({
       currentPiece: piece,
@@ -369,12 +530,11 @@ class FieldController extends GameObject {
   }
 
   _movePiece(keys, game) {
-
     if (this.paused) return false;
 
     let {y, x, rotate, type} = game.state.currentPiece;
     const oldCurrentPiecePosition = game.state.currentPiece;
-    type = type || this.types[getRandomInt(0, 4)];
+    type = type || this.types[getRandom(0)];
     let down = false;
     let audio = this.audioMove;
 
@@ -390,32 +550,43 @@ class FieldController extends GameObject {
           x = x - 1;
         }
 
-        // down or space
-        if (keys[74] || keys[32] || keys[40]) {
-          // y = y + 1;
-          this.isPushing = true;
+        // down or j
+        if (keys[74] || keys[40]) {
+          y = y + 1;
+          this._updateScore(15, game);
           down = true;
           return;
         }
+
       });
-      // up
-      if (keys[38] || keys[75]) {
-        this.delayBlock150(() => {
-          rotate = rotate === 3 ? 0 : rotate + 1;
-          audio = this.audioRotate;
+      this.delayBlock150(() => {
+        // up
+        if (keys[38] || keys[75]) {
+            rotate = rotate === 3 ? 0 : rotate + 1;
+            audio = this.audioRotate;
+        }
+          // space
+          if (keys[32]) {
+            // y = y + 1;
+            this.isPushing = true;
+            down = true;
+            return;
+          }
         });
-      }
     } else {
         const velocity = this.isPushing ? 1 : 1;
         y = y + velocity;
         down = true;
         audio = null;
+        if(this.isPushing) {
+          this._updateScore(10, game)
+        }
     }
 
     // Play audio effect
     if(audio) {
       audio.currentTime = 0;
-      audio.play();
+      // audio.play();
     }
 
     game.setState({
@@ -425,7 +596,7 @@ class FieldController extends GameObject {
       // matrix: Object.assign(this.props.matrix)
     });
 
-    this._removeFromMatrix(this._getPiece(game.state.oldCurrentPiecePosition));
+    this._removeFromMatrix(game.state.oldCurrentPiecePosition);
 
     let validateResult = this._validate(game);
 
@@ -443,6 +614,26 @@ class FieldController extends GameObject {
       game.setState({
         matrix: Object.assign(this.props.matrix),
         currentPiece: oldCurrentPiecePosition
+      });
+      return;
+    }
+
+    if (validateResult === 'out-wall') {
+      // Brings back the piece to the viewport on the rotate or moving
+      do {
+        x = x > this.props.matrix[0].length / 2 ? x - 1 : x + 1;
+
+        game.setState({
+          currentPiece: { type, rotate, x, y },
+        });
+      }
+      while(this._validate(game) === 'out-wall');
+
+
+      this._pushToMatrix(game.state.currentPiece);
+
+      game.setState({
+        matrix: Object.assign(this.props.matrix)
       });
       return;
     }

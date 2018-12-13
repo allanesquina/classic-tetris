@@ -31,11 +31,13 @@ class Game {
 
   bindEvents() {
     document.addEventListener('keydown', (e) => {
+      e.preventDefault();
       this.pressedKeys[e.keyCode] = e;
       this.pressedKeys.isPressed = true;
     });
 
     document.addEventListener('keyup', (e) => {
+      e.preventDefault();
       this.pressedKeys[e.keyCode] = false;
       this.pressedKeys.isPressed = false;
     });

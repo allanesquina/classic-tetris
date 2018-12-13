@@ -3,7 +3,7 @@ let game = new Game('stage', 300, 450, 15);
 let playField = new GameZone(game.context, {
   score: `0000`, 
   lines: `0`, 
-  level: `0`, 
+  level: `1`, 
   matrix: [],
   control: { down: false },
 });
@@ -12,8 +12,8 @@ function createPiecesArea(playField) {
   // Creating the pieces area
   let p = [];
   let spriteSize = 7;
-  let pw = spriteSize * 2.0;
-  let border = 3;
+  let pw = spriteSize * 2.3;
+  let border = 1;
   let matrixHeight;
   let matrixWidth;
 
@@ -124,8 +124,18 @@ let level = new Level({
 var myElement = document.getElementById('stage');
 var hammertime = new Hammer(myElement, {});
 
-hammertime.get('swipe').set({ direction: Hammer.DIRECTION_VERTICAL });
-hammertime.on('panleft panright  tap swipedown', function(ev) {
+hammertime.get('swipe')
+  .set({ 
+    direction: Hammer.DIRECTION_VERTICAL, 
+    threshold: 5,
+    velocity: 0.2
+  });
+hammertime.get('pan')
+  .set({ 
+    // direction: Hammer.DIRECTION_HORIZONTAL, 
+    threshold: 15 
+  });
+hammertime.on('pandown panleft panright tap swipedown', function(ev) {
   var keys = {};
   if(ev.type === 'panleft') {
     keys[72]=ev;
@@ -133,9 +143,12 @@ hammertime.on('panleft panright  tap swipedown', function(ev) {
   if(ev.type === 'panright') {
     keys[76]=ev;
   }
+  if(ev.type === 'pandown') {
+    keys[74]=ev;
+  }
 
   if(ev.type === 'swipedown') {
-    keys[74]=ev;
+    keys[32]=ev;
   }
 
   if(ev.type === 'tap') {
