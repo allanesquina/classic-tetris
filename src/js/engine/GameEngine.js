@@ -19,6 +19,7 @@ export default class Game {
       }
     };
 
+    this.renderIsRunning = false;
     this.pressedKeys = { count: 0 };
     this.render = this.render.bind(this);
     this.walkThroughGameObjects = this.walkThroughGameObjects.bind(this);
@@ -36,6 +37,7 @@ export default class Game {
       globalState: this.state,
       setGlobalState: this.setState,
       event: this.event,
+      objlength: Object.keys(this.zone.objs).length,
     };
   }
 
@@ -58,7 +60,7 @@ export default class Game {
   }
 
   start() {
-    this.zone.renderIsRunning = true;
+    this.renderIsRunning = true;
     this.render();
   }
 
@@ -82,9 +84,10 @@ export default class Game {
 
   walkThroughGameObjects(fn) {
     const objs = this.zone.objs;
+    const objsKeys = Object.keys(objs);
 
-    for (let i=0, l = objs.length; i < l; i += 1) {
-      const obj = objs[i];
+    for (let i=0, l = objsKeys.length; i < l; i += 1) {
+      const obj = objs[objsKeys[i]];
       if (obj) {
         fn(obj, i);
       }
@@ -102,9 +105,11 @@ export default class Game {
 
     if(nextStage) {
       if(this.zone) {
+        this.zone.isActive = false;
         this.zone.dispatchOnDestroyEvent();
       }
       this.zone = nextStage;
+      this.zone.isActive = true;
       this.zone.dispatchOnInitEvent();
       return;
     }

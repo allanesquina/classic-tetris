@@ -1,7 +1,7 @@
 import Pixel from './Pixel';
 import Game from './engine/GameEngine';
 import FieldController from './FieldController';
-import SpriteSheet from '../assets/img/sprite2.png';
+import SpriteSheet from '../assets/img/sprite3.png';
 import { TouchEvents } from './touchEvent';
 import { GameEvents } from './gameEvent';
 import { config } from './gameConfig';
@@ -9,7 +9,7 @@ import { config } from './gameConfig';
 export default function () {
 
   // Config
-  let game = new Game('stage', config.canvas.width, config.canvas.height, 60);
+  let game = new Game('stage', config.canvas().width, config.canvas().height, config.render.fps);
   let playField = game.stage('playfield', config.initialState);
   let menu = game.stage('menu');
 
@@ -19,6 +19,10 @@ export default function () {
   });
 
   playField.connect(fieldController);
+
+  game.event.on('theme', (theme) => {
+    createPiecesArea(playField);
+  });
 
   function createPiecesArea(playField) {
     // Creating the pieces area
@@ -32,7 +36,7 @@ export default function () {
       for (let j = 0, y = config.matrix.width; j < y; j++) {
         playField.connect(new Pixel({
           name: `Piece-${i+2}-${j}`,
-          type: 'sprite',
+          type: config.sprite.type,
           sprite: SpriteSheet,
           sw: spriteSize,
           sh: spriteSize,

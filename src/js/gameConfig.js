@@ -1,12 +1,13 @@
 export const config = {
-    canvas: {
-        width: 175,
-        height: 380,
-    },
+    canvas: () => ({
+        height: ((config.matrix.height-2) * ((config.sprite.size * config.sprite.scale) + config.sprite.border)) + config.sprite.border,
+        width: (config.matrix.width  * ((config.sprite.size * config.sprite.scale) + config.sprite.border)) + config.sprite.border
+    }),
     sprite: {
         size: 7,
         scale: 2.3,
-        border: 1,
+        border: 2,
+        type: 'sprite',
     },
     matrix: {
         width: 10,
@@ -24,7 +25,7 @@ export const config = {
         control: { down: false },
     },
     render: {
-        fps: 5,
+        fps: 60,
     },
     skipLevelAt: 10,
 

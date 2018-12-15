@@ -1,3 +1,5 @@
+import { config } from './gameConfig';
+
 // Touch events by using Hammerjs
 export function TouchEvents(gameController, game) {
     var myElement = document.getElementById('canvas-wrapper');
@@ -16,7 +18,7 @@ export function TouchEvents(gameController, game) {
         threshold: 15 
     });
 
-    hammertime.on('pandown panleft panright tap swipedown', function(ev) {
+    hammertime.on('pandown panleft panright tap swipedown swipeup', function(ev) {
         var keys = {};
 
         if(ev.type === 'panleft') {
@@ -33,6 +35,12 @@ export function TouchEvents(gameController, game) {
 
         if(ev.type === 'swipedown') {
             keys[32]=ev;
+        }
+
+        if(ev.type === 'swipeup') {
+            config.sprite.border = -1;
+            config.sprite.type = 'rect';
+            game.event.emit('theme');
         }
 
         if(ev.type === 'tap') {

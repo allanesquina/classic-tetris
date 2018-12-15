@@ -4,6 +4,7 @@ export default function() {
 
 	// Used to store registered topics
 	var topics = [];
+	var globalIndex = 0;
 
 	/**
 	 * Check name and if the function exists
@@ -20,7 +21,11 @@ export default function() {
 	 */
 	function sub( name, fn ) {
 		if( validate( name ) && ( fn && fn.call ) ) {
-			( topics[ name ] = topics[ name ] || [] ).push( fn );
+			const index = `a${globalIndex++}`;
+			( topics[ name ] = topics[ name ] || {} )[ index ] = fn;
+			return () => {
+				delete topics[ name ][ index ];
+			}
 		}
 	}
 
@@ -28,13 +33,14 @@ export default function() {
 	 * Publishing the registered topics
 	 */
 	function pub( name ) {
-		var	tpc = topics[ name ] || [],
-			len = tpc.length,
+		var	tpc = topics[ name ] || {},
+			keys = Object.keys(tpc),
+			len = keys.length,
 			i=0;
 
 		if( validate( name ) ) {
 			for( ; i < len ; i+=1 ) {
-				tpc[ i ].apply( this, Array.prototype.slice.call( arguments, 1 ) );
+				tpc[ keys[i] ] && tpc[ keys[i] ].apply( this, Array.prototype.slice.call( arguments, 1 ) );
 			}
 		}
 	}

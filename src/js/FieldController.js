@@ -8,7 +8,7 @@ import  DropAudioSrc from '../assets/audio/drop.ogg';
 import  MoveAudioSrc from '../assets/audio/move.wav';
 import  RotateAudioSrc from '../assets/audio/rotate.wav';
 import pieces from './pieces';
-import SpriteSheet from '../assets/img/sprite2.png';
+import SpriteSheet2 from '../assets/img/sprite2.png';
 import { config } from './gameConfig';
 import {
   PIECES_SPRITE_COLORS,
@@ -16,6 +16,8 @@ import {
  } from './enum';
 
   var piecesImages =  new Map();
+  let sprite =  new Image();
+  sprite.src = SpriteSheet2;
 
   function getNextPieceImage(type, game) {
     const image = piecesImages.get(type);
@@ -31,8 +33,6 @@ import {
   function createNextPieceImage(matrix) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    let sprite =  new Image();
-    sprite.src = SpriteSheet;
 
     let spriteSize = config.sprite.size;
     let pw = spriteSize * config.sprite.scale;
@@ -47,10 +47,10 @@ import {
     for (let i = 0, l = config.matrixNext.height; i < l; i++) {
       for (let j = 0, y = config.matrixNext.width; j < y; j++) {
 
-      if (matrix[i] && matrix[i][j]) {
-        const pos = matrix[i][j];
-        sx = pos.filled > 0 ? PIECES_SPRITE_COLORS[pos.type] : PIECES_SPRITE_COLORS['black'];
-      }
+        if (matrix[i] && matrix[i][j]) {
+          const pos = matrix[i][j];
+          sx = pos.filled > 0 ? PIECES_SPRITE_COLORS[pos.type] : PIECES_SPRITE_COLORS['black'];
+        }
         ctx.drawImage(
           sprite,
           sx, 0, spriteSize, spriteSize,
@@ -60,7 +60,6 @@ import {
       }
     }
     
-    console.log(canvas.toDataURL())
     return canvas.toDataURL();
   }
 
