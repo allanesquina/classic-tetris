@@ -1,31 +1,41 @@
-class Game {
-  constructor(id, w, h, frameSkip) {
+import PubSub from '../jps';
+import GameZone from './GameZone';
+import GameObject from './GameObject';
+
+export default class Game {
+  constructor(id, w, h, fps) {
     this.canvas = document.getElementById(id || 'stage');
+    this.canvas.width = w;
+    this.canvas.height = h;
     this.context = this.canvas.getContext('2d');
+    this.context.imageSmoothingEnabled = true;
     this.lastTime = Date.now() / 1000;
+    this.fps = fps ? (0.01666 / fps) * 60 : 0.013; // 60fps
+    this.stages = {};
     this.state = {
       stage: {
         height: h,
         width: w,
-        frameSkip
       }
     };
-    this.pressedKeys = { count: 0 };
 
+    this.pressedKeys = { count: 0 };
     this.render = this.render.bind(this);
     this.walkThroughGameObjects = this.walkThroughGameObjects.bind(this);
 
     this.bindEvents();
-    window.context = this.context;
+    this.event = new PubSub();
   }
 
   getGameEventObject() {
+    const zone = this.zone ? this.zone : {};
     return {
-      state: this.zone.state,
-      setState: this.zone.setState,
-      connect: this.zone.connect,
+      state: zone.state,
+      setState: zone.setState,
+      connect: zone.connect,
       globalState: this.state,
       setGlobalState: this.setState,
+      event: this.event,
     };
   }
 
@@ -53,12 +63,11 @@ class Game {
   }
 
   render() {
-    const fps = 0.013; // 60fps;
-    // const fps = 0.017; ;
     const time = Date.now() / 1000;
-    if (time > this.lastTime + fps) {
+    if (time > this.lastTime + this.fps) {
       this.lastTime = time;
       this.context.clearRect(0, 0, this.state.stage.width, this.state.stage.height);
+      // this.canvas.width = this.canvas.width;
       this.walkThroughGameObjects((obj, i) => {
         (obj.stateToProp && obj.stateToProp(this.getGameEventObject()));
         (obj.onKeyDown && obj.onKeyDown(this.pressedKeys, this.getGameEventObject()));
@@ -82,8 +91,26 @@ class Game {
     }
   }
 
-  setZone(zone) {
-    this.zone = zone;
+  activeStage(stage) {
+    let nextStage;
+
+    if(Object.prototype.toString.call(stage) === '[object String]') {
+      nextStage = this.stages[stage];
+    } else {
+      nextStage = this.stages[stage.name];
+    }
+
+    if(nextStage) {
+      if(this.zone) {
+        this.zone.dispatchOnDestroyEvent();
+      }
+      this.zone = nextStage;
+      this.zone.dispatchOnInitEvent();
+      return;
+    }
+
+    throw new Error(`Can not find stage ${stage}`);
+
   }
 
   setState(newState) {
@@ -110,4 +137,18 @@ class Game {
     return out;
   }
 
+  stage(name, state) {
+    const stage = new GameZone(this, state);
+    this.stages[name] = stage;
+    stage.name = name;
+    return stage; 
+  }
+
+  object(props) {
+    return new GameObject(props)
+  }
+
+
 };
+
+Game.GameObject = GameObject;

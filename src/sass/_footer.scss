@@ -1,0 +1,127 @@
+.footer {
+  padding: 15px 10px;
+  background-color: #FFF;
+  box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.footer-copyright {
+  padding: 10px;
+
+  @include breakpoint(smd) {
+    float: none;
+    text-align: center;
+  }
+
+  @include breakpoint(md) {
+    float: left;
+    margin-top: 4px;
+  }
+}
+
+.footer-connect {
+  padding: 5px;
+
+  @include breakpoint(smd) {
+    float: none;
+    text-align: center;
+  }
+
+  @include breakpoint(md) {
+    float: right;
+  }
+}
+
+.footer-connect>ul {
+  margin: 0;
+  padding: 0 10px;
+  display: inline-block;
+  height: 30px;
+
+  @include breakpoint(smd) {
+    display: block;
+    margin: auto;
+  }
+}
+
+.footer-connect>ul:first-child {
+  border-right: 1px solid #CDCDCD;
+
+  @include breakpoint(smd) {
+    margin-bottom: 10px;
+    border-right: none;
+  }
+}
+
+.footer-connect>ul>li {
+  list-style: none;
+  display: inline-block;
+  padding: 0 6px;
+
+  @include breakpoint(smd) {
+    padding: 0 2px;
+  }
+
+  &>a {
+    display: block;
+  }
+}
+
+.footer-connect__apps {
+  height: 30px;
+  width: 100px;
+  display: inline-block;
+
+  @include breakpoint(smd) {
+    height: 27px;
+  }
+
+  &.appstore {
+    background: url('../assets/img/icon-appstore.png') no-repeat;
+    background-size: contain;
+  }
+
+  &.googleplay {
+    background: url('../assets/img/icon-googleplay.png') no-repeat;
+    background-size: contain;
+  }
+}
+
+.footer-connect__socmed {
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+
+  @include breakpoint(smd) {
+    height: 27px;
+  }
+
+  &.facebook {
+    background: url('../assets/img/icon-facebook.png') no-repeat;
+    background-size: contain;
+  }
+
+  &.instagram {
+    background: url('../assets/img/icon-instagram.png') no-repeat;
+    background-size: contain;
+  }
+
+  &.twitter {
+    background: url('../assets/img/icon-twitter.png') no-repeat;
+    background-size: contain;
+  }
+
+  &.youtube {
+    background: url('../assets/img/icon-youtube.png') no-repeat;
+    background-size: contain;
+  }
+
+  &.googleplus {
+    background: url('../assets/img/icon-googleplus.png') no-repeat;
+    background-size: contain;
+  }
+
+  &.blog {
+    background: url('../assets/img/icon-blog.png') no-repeat;
+    background-size: contain;
+  }
+}

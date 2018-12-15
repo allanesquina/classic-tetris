@@ -1,4 +1,4 @@
-class GameObject {
+export default class GameObject {
   constructor(props = {}) {
     this.props = props;
     this.lastProps = Object.assign({}, props);
@@ -36,7 +36,7 @@ class GameObject {
           this.props.sx, 0, sw, sh,
           x, y, w, h
         );
-        this.props.sx = this.props.sx > w ? 0 : this.props.sx + w;
+        // this.props.sx = this.props.sx > w ? 0 : this.props.sx + w;
         break;
       default:
 

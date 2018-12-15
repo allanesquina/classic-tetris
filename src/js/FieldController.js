@@ -1,187 +1,82 @@
-const throttle = (func, limit) => {
-    let inThrottle
-    return function() {
-        const args = arguments
-        const context = this
-        if (!inThrottle) {
-              func.apply(context, args)
-              inThrottle = true
-          setTimeout(() => inThrottle = false, limit)
-            }
-      }
+import Game from './engine/GameEngine';
+import { throttle } from './engine/Utils';
+import  SingleAudioSrc from '../assets/audio/single.ogg';
+import  DoubleAudioSrc from '../assets/audio/double.ogg';
+import  TripleAudioSrc from '../assets/audio/triple.ogg';
+import  TetrisAudioSrc from '../assets/audio/tetris.ogg';
+import  DropAudioSrc from '../assets/audio/drop.ogg';
+import  MoveAudioSrc from '../assets/audio/move.wav';
+import  RotateAudioSrc from '../assets/audio/rotate.wav';
+import pieces from './pieces';
+import SpriteSheet from '../assets/img/sprite2.png';
+import { config } from './gameConfig';
+import {
+  PIECES_SPRITE_COLORS,
+  PIECES_TYPES,
+ } from './enum';
+
+  var piecesImages =  new Map();
+
+  function getNextPieceImage(type, game) {
+    const image = piecesImages.get(type);
+    if(!image) {
+      const tmpImage = createNextPieceImage(game.state.matrixNext);
+      piecesImages.set(type, tmpImage);
+      return tmpImage;
+    }
+
+    return image;
   }
 
-const pieces = [];
-    pieces['T'] = [
-      [ 
-        [0,1,0],
-        [1,1,1],
-        [0,0,0],
-      ],
-      [ 
-        [0,1,0],
-        [0,1,1],
-        [0,1,0],
-      ],
-      [ 
-        [0,0,0],
-        [1,1,1],
-        [0,1,0],
-      ],
-      [ 
-        [0,1,0],
-        [1,1,0],
-        [0,1,0],
-      ],
-    ];
+  function createNextPieceImage(matrix) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    let sprite =  new Image();
+    sprite.src = SpriteSheet;
 
-    pieces['O'] = [
-      [ 
-        [1,1],
-        [1,1],
-      ],
-    ];
-    pieces['O'][1] = pieces['O'][0]
-    pieces['O'][2] = pieces['O'][0]
-    pieces['O'][3] = pieces['O'][0]
+    let spriteSize = config.sprite.size;
+    let pw = spriteSize * config.sprite.scale;
+    let border = config.sprite.border;
+    let sx = 0;
+    const imageHeight = matrix.length * (pw + border);
+    const imageWidth = matrix[0].length * (pw + border);
 
-    pieces['I'] = [
-      [ 
-        [0,0,0,0],
-        [1,1,1,1],
-        [0,0,0,0],
-        [0,0,0,0],
-      ],
-      [ 
-        [0,0,1,0],
-        [0,0,1,0],
-        [0,0,1,0],
-        [0,0,1,0],
-      ],
-      [ 
-        [0,0,0,0],
-        [0,0,0,0],
-        [1,1,1,1],
-        [0,0,0,0],
-      ],
-      [ 
-        [0,1,0,0],
-        [0,1,0,0],
-        [0,1,0,0],
-        [0,1,0,0],
-      ],
-    ];
+    canvas.width = imageWidth;
+    canvas.height = imageHeight;
 
-    pieces['S'] = [
-      [ 
-        [0,1,1],
-        [1,1,0],
-        [0,0,0],
-      ],
-      [ 
-        [0,1,0],
-        [0,1,1],
-        [0,0,1],
-      ],
-      [ 
-        [0,0,0],
-        [0,1,1],
-        [1,1,0],
-      ],
-      [ 
-        [1,0,0],
-        [1,1,0],
-        [0,1,0],
-      ],
-    ];
+    for (let i = 0, l = config.matrixNext.height; i < l; i++) {
+      for (let j = 0, y = config.matrixNext.width; j < y; j++) {
 
-    pieces['Z'] = [
-      [ 
-        [1,1,0],
-        [0,1,1],
-        [0,0,0],
-      ],
-      [ 
-        [0,0,1],
-        [0,1,1],
-        [0,1,0],
-      ],
-      [ 
-        [0,0,0],
-        [1,1,0],
-        [0,1,1],
-      ],
-      [ 
-        [0,1,0],
-        [1,1,0],
-        [1,0,0],
-      ],
-    ];
+      if (matrix[i] && matrix[i][j]) {
+        const pos = matrix[i][j];
+        sx = pos.filled > 0 ? PIECES_SPRITE_COLORS[pos.type] : PIECES_SPRITE_COLORS['black'];
+      }
+        ctx.drawImage(
+          sprite,
+          sx, 0, spriteSize, spriteSize,
+          (j * (pw + border)), (i * (pw + border)),
+          pw, pw 
+        );
+      }
+    }
+    
+    console.log(canvas.toDataURL())
+    return canvas.toDataURL();
+  }
 
-    pieces['L'] = [
-      [ 
-        [0,0,1],
-        [1,1,1],
-        [0,0,0],
-      ],
-      [ 
-        [0,1,0],
-        [0,1,0],
-        [0,1,1],
-      ],
-      [ 
-        [0,0,0],
-        [1,1,1],
-        [1,0,0],
-      ],
-      [ 
-        [1,1,0],
-        [0,1,0],
-        [0,1,0],
-      ],
-    ];
-
-    pieces['J'] = [
-      [ 
-        [1,0,0],
-        [1,1,1],
-        [0,0,0],
-      ],
-      [ 
-        [0,1,1],
-        [0,1,0],
-        [0,1,0],
-      ],
-      [ 
-        [0,0,0],
-        [1,1,1],
-        [0,0,1],
-      ],
-      [ 
-        [0,1,0],
-        [0,1,0],
-        [1,1,0],
-      ],
-    ];
-
-class FieldController extends GameObject {
-  constructor(props, game) {
+  export default class FieldController extends Game.GameObject {
+  constructor(props) {
     super(props);
 
     this.props = props;
-    this.props.matrix = this._createMatrix(10, 24);
-    this.props.matrixNext = this._createMatrix(4, 6);
-    this.tab_probability = [1, 1, 1, 1, 1, 1, 1];
-    this.types = [`T`, `O`, `I`, `S`, `Z`, `L`, `J`];
     this.interval = null;
-    this.paused = false;
-    this.audioRotate = new Audio('audio/rotate.wav');
-    this.audioMove = new Audio('audio/move.wav');
-    this.audioDrop = new Audio('audio/drop.ogg');
-    this.audioLineSingle = new Audio('audio/single.ogg');
-    this.audioLineDouble = new Audio('audio/double.ogg');
-    this.audioLineTriple = new Audio('audio/triple.ogg');
-    this.audioLineTetris = new Audio('audio/tetris.ogg');
+    this.audioRotate = new Audio(RotateAudioSrc);
+    this.audioMove = new Audio(MoveAudioSrc);
+    this.audioDrop = new Audio(DropAudioSrc);
+    this.audioLineSingle = new Audio(SingleAudioSrc);
+    this.audioLineDouble = new Audio(DoubleAudioSrc);
+    this.audioLineTriple = new Audio(TripleAudioSrc);
+    this.audioLineTetris = new Audio(TetrisAudioSrc);
     this.audioRotate.volume = .4;
     this.audioMove.volume = .2;
     this.audioDrop.volume = .5;
@@ -190,10 +85,6 @@ class FieldController extends GameObject {
     this.audioLineTriple.volume = .5;
     this.audioLineTetris.volume = .5
 
-    this.currentLevel = 1;
-
-    this._newPiece(game);
-
     this.delayBlock150 = throttle((cb) => {
       cb()
     }, 120);
@@ -201,6 +92,26 @@ class FieldController extends GameObject {
     this.delayBlock50 = throttle((cb) => {
       cb();
     }, 60);
+
+  }
+
+  onInit(game) {
+    this._reset(game);
+
+    game.event.on('reset', () => {
+      this._reset(game);
+    })
+  }
+
+  _reset(game) {
+    this.props.matrix = this._createMatrix(config.matrix.width, config.matrix.height);
+    this.props.matrixNext = this._createMatrix(config.matrixNext.width, config.matrixNext.height);
+    this.linesCount = 0;
+    this.currentLevel = 1;
+    this.tab_probability = [1, 1, 1, 1, 1, 1, 1];
+    game.setState({score: 0});
+    this._newPiece(game);
+    this.paused = false;
   }
 
   _createMatrix(width, height) {
@@ -219,7 +130,6 @@ class FieldController extends GameObject {
   }
 
   onEnterFrame(game) {
-
     if(this.isPushing) {
         this._movePiece(null, game)
         this._movePiece(null, game)
@@ -229,18 +139,19 @@ class FieldController extends GameObject {
 
     if (this.paused) {
       if (this.isRemovingLines) {
-        if (Date.now() % 2 === 0) {
+        const time = Date.now() / 1000;
+        if (time > this.lastTime + 0.015) {
+          this.lastTime = time;
           this.currentPixel = this.currentPixel > 0 ? this.currentPixel : 0;
           this._walkThroughLinesToBeRemoved(this.currentPixel);
 
-          if (this.currentPixel === 11) {
+          if (this.currentPixel === config.matrix.width + 1) {
             this._removeLinesFromMatrix(this.linesToBeRemoved);
             this.currentPixel = 0;
             this.paused = false;
             this.isRemovingLines = false;
             this._updateScore(this.linesToBeRemoved.length, game);
             this._updateLines(this.linesToBeRemoved.length, game);
-            this._updateLevel(game);
           } else {
             this.currentPixel++;
           }
@@ -248,10 +159,8 @@ class FieldController extends GameObject {
         }
       }
     } else {
-      const time = Date.now() / 1000;
-
       const gVelocity = Math.pow((0.8-((this.currentLevel-1)*0.007)),this.currentLevel-1)
-
+      const time = Date.now() / 1000;
       if (time > this.lastTime + gVelocity) {
         this.lastTime = time;
         this._movePiece(null, game)
@@ -259,17 +168,32 @@ class FieldController extends GameObject {
     }
   }
 
-  _updateLevel(game) {
-    let lines = parseInt(game.state.lines);
-    let level = parseInt(game.state.level);
-    const limit = 10;
+  _walkThroughLinesToBeRemoved(pixel) {
+    for (let i = 0, l = this.linesToBeRemoved.length; i < l; i++) {
+      pixel = (i + 1) % 2 === 1 ? config.matrix.width - pixel : pixel;
+      this._emptyPixelFromLine(pixel, this.props.matrix[this.linesToBeRemoved[i]]);
+    }
+  }
 
-    const newLevel = +(lines / limit).toString().split('.')[0];
-    game.setState({level: newLevel || 1});
-    this.currentLevel = newLevel;
+  _emptyPixelFromLine(pixel, line) {
+    if (line[pixel]) {
+      line[pixel].filled = 0;
+      delete line[pixel].type;
+    }
+  }
+
+  _updateLevel(game) {
+    let level = parseInt(game.state.level);
+    game.setState({level: level + 1});
+    this.currentLevel = level + 1; 
   }
 
   _updateLines(linesNumber, game) {
+    this.linesCount += linesNumber;
+    if(this.linesCount >= config.skipLevelAt) {
+      this.linesCount = this.linesCount - config.skipLevelAt;
+      this._updateLevel(game);
+    }
     let lines = parseInt(game.state.lines);
     lines = lines + linesNumber;
     game.setState({lines});
@@ -302,21 +226,10 @@ class FieldController extends GameObject {
     }
 
     game.setState({score});
+    game.event.emit('score', score)
 
   }
 
-  _walkThroughLinesToBeRemoved(pixel) {
-    for (let i = 0, l = this.linesToBeRemoved.length; i < l; i++) {
-      pixel = (i + 1) % 2 === 1 ? 10 - pixel : pixel;
-      this._emptyPixelFromLine(pixel, this.props.matrix[this.linesToBeRemoved[i]]);
-    }
-  }
-
-  _emptyPixelFromLine(pixel, line) {
-    if (line[pixel]) {
-      line[pixel].filled = 0;
-    }
-  }
 
   onKeyUp(e, game) {
   }
@@ -349,9 +262,9 @@ class FieldController extends GameObject {
 
   _validateLineScore() {
     let lines = [];
-    for (let i = 0, l = 24; i < l; i++) {
+    for (let i = 0, l = config.matrix.height; i < l; i++) {
       let line = 0;
-      for (var j = 0, y = 10; j < y; j++) {
+      for (var j = 0, y = config.matrix.width; j < y; j++) {
         line = this.props.matrix[i][j].filled > 0 ? line + 1 : line;
       }
 
@@ -473,7 +386,7 @@ class FieldController extends GameObject {
   }
 
   _randomPiece() {
-    return { type: this.types[this._getRandom()], rotate: 0, x: 0, y: 0 };
+    return { type: PIECES_TYPES[this._getRandom()], rotate: 0, x: 0, y: 0 };
   }
 
   _handleNextPiece(game) {
@@ -493,7 +406,8 @@ class FieldController extends GameObject {
 
     this._pushToMatrix(this.nextPiece, this.props.matrixNext);
 
-    piece.x = 4;
+
+    piece.x = parseInt(config.matrix.width / 2);
     piece.y = 1;
 
     game.setState({
@@ -502,6 +416,8 @@ class FieldController extends GameObject {
       matrixNext: Object.assign(this.props.matrixNext),
       matrix: Object.assign(this.props.matrix)
     });
+
+    game.event.emit('nextPiece',  getNextPieceImage(this.nextPiece.type, game));
   }
 
   _newPiece(game) {
@@ -516,6 +432,7 @@ class FieldController extends GameObject {
     if (validateResult === 'colision') {
       this.paused = true;
       console.log(`gameover`);
+      game.event.emit('gameover');
       return
     }
 
@@ -534,7 +451,7 @@ class FieldController extends GameObject {
 
     let {y, x, rotate, type} = game.state.currentPiece;
     const oldCurrentPiecePosition = game.state.currentPiece;
-    type = type || this.types[getRandom(0)];
+    type = type || PIECES_TYPES[getRandom(0)];
     let down = false;
     let audio = this.audioMove;
 
@@ -559,9 +476,14 @@ class FieldController extends GameObject {
         }
 
       });
+        // up
+        if (keys[38]) {
+            rotate = rotate === 3 ? 0 : rotate + 1;
+            audio = this.audioRotate;
+        }
       this.delayBlock150(() => {
         // up
-        if (keys[38] || keys[75]) {
+        if (keys[75]) {
             rotate = rotate === 3 ? 0 : rotate + 1;
             audio = this.audioRotate;
         }
@@ -574,8 +496,7 @@ class FieldController extends GameObject {
           }
         });
     } else {
-        const velocity = this.isPushing ? 1 : 1;
-        y = y + velocity;
+        y = y + 1
         down = true;
         audio = null;
         if(this.isPushing) {
@@ -593,7 +514,6 @@ class FieldController extends GameObject {
       control: { down },
       currentPiece: { type, rotate, x, y },
       oldCurrentPiecePosition,
-      // matrix: Object.assign(this.props.matrix)
     });
 
     this._removeFromMatrix(game.state.oldCurrentPiecePosition);
@@ -621,7 +541,7 @@ class FieldController extends GameObject {
     if (validateResult === 'out-wall') {
       // Brings back the piece to the viewport on the rotate or moving
       do {
-        x = x > this.props.matrix[0].length / 2 ? x - 1 : x + 1;
+        x = x > parseInt(config.matrix.width / 2) ? x - 1 : x + 1;
 
         game.setState({
           currentPiece: { type, rotate, x, y },

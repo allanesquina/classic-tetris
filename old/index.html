@@ -24,6 +24,12 @@
     50%{background-position:37% 100%}
     100%{background-position:64% 40%}
 }
+  body, html {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
     body  {
       background: #0c0a1a;
       color: #777;
@@ -45,25 +51,50 @@
       text-align: center;
     }
     .controls {
-      position: fixed;
       z-index: 100;
       bottom: 0;
 	    text-align: center;
       width: 100%;
       background: #0d0a1b;
+      padding-top: 5%;
     }
     .button {
-      line-height: 50px;
+      padding: 5% 0%;
       width: 19%;
-      height: 50px;
+      height: 50vh;
       margin: auto;
       display: inline-block;
-      color: #4c4761;
+      color: #908aa7;
+      font-size: 2em;
         user-select: none;
         -moz-user-select: none;
         -khtml-user-select: none;
         -webkit-user-select: none;
         -o-user-select: none;
+    }
+    .button:active {
+      background-color: #27223e;
+    }
+    .icon {
+      background-size: 40%;
+      background-position: top;
+      background-repeat: no-repeat;
+    }
+
+    .icon-left {
+      background-image: url(img/left.svg);
+    }
+    .icon-right {
+      background-image: url(img/right.svg);
+    }
+    .icon-down {
+      background-image: url(img/down.svg);
+    }
+    .icon-push {
+      background-image: url(img/push.svg);
+    }
+    .icon-rotate {
+      background-image: url(img/rotate.svg);
     }
     .canvas-template {
       background: #000;
@@ -103,9 +134,50 @@
     .info-title {
       font-size: 4vw;
     }
+
+    .menu, .gameover {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: #18132b;
+      z-index: 500;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .start-button {
+      background: #27223e;
+      font-size: 4vh;
+      padding: 2% 10%;
+      border: 1vw solid #b3b0c3;
+      border-radius: 6vw;
+      color: #ffffff;
+    }
+    .start-button:hover {
+      background: #504680;
+    }
+    .gameover {
+      display: none;
+    }
   </style>
 </head>
 <body>
+  <div class="menu">
+    <button class="start-button">Start Game</button>
+  </div>
+  <div class="gameover">
+    <div class="gameinfo">
+      <h1>Score</h1>
+      <span class="gameinfo_txt" id="gameinfo_score"></span>
+      <h1>Lines</h1>
+      <span class="gameinfo_txt " id="gameinfo_lines"></span>
+      <h1>Level</h1>
+      <span class="gameinfo_txt " id="gameinfo_level"></span>
+    </div>
+    <button class="restart-button">Restart Game</button>
+  </div>
 	<div class="canvas-template">
 		<div class="info-wrapper">
 			<div class="info-score">
@@ -126,13 +198,14 @@
   <div class="info">
   </div>
   <div class="controls">
-	  <div data-key="72" class="button"> < </div>
-	  <div data-key="76" class="button"> > </div>
-	  <div data-key="74" class="button"> V </div>
-	  <div data-key="32" class="button"> 0 </div>
-	  <div data-key="38" class="button"> r </div>
+	  <div data-key="74" class="button icon icon-down"></div>
+	  <div data-key="72" class="button icon icon-left"></div>
+	  <div data-key="32" class="button icon icon-push"></div>
+	  <div data-key="76" class="button icon icon-right"></div>
+	  <div data-key="38" class="button icon icon-rotate"></div>
   </div>
   <script src="hammer.min.js" charset="utf-8"></script>
+  <script src="jps.js" charset="utf-8"></script>
   <script src="Utils.js" charset="utf-8"></script>
   <script src="GameEngine.js" charset="utf-8"></script>
   <script src="GameZone.js" charset="utf-8"></script>
@@ -140,6 +213,6 @@
   <script src="Pixel.js" charset="utf-8"></script>
   <script src="Text.js" charset="utf-8"></script>
   <script src="FieldController.js" charset="utf-8"></script>
-  <script src="app.js" charset="utf-8"></script>
+  <script src="app.js?122" charset="utf-8"></script>
 </body>
 </html>
