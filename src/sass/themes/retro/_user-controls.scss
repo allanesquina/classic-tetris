@@ -1,0 +1,29 @@
+.theme {
+    .user-controls {
+        z-index: 100;
+        bottom: 0;
+        text-align: center;
+        width: 100%;
+        background: #0d0a1b;
+        padding-top: 5%;
+
+        &__button {
+            padding: 5% 0%;
+            width: 19%;
+            height: 50vh;
+            margin: auto;
+            display: inline-block;
+            color: #908aa7;
+            font-size: 2em;
+            user-select: none;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+
+            &:active {
+                background-color: #27223e;
+            }
+        }
+    }
+}

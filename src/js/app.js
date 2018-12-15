@@ -25,6 +25,7 @@ export default function () {
   });
 
   function createPiecesArea(playField) {
+    game.context.clearRect(0, 0, game.state.stage.width, game.state.stage.height);
     // Creating the pieces area
     let spriteSize = config.sprite.size;
     let pixelWidth = spriteSize * config.sprite.scale;

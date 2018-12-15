@@ -2,9 +2,9 @@ import { config } from './gameConfig';
 
 // Touch events by using Hammerjs
 export function TouchEvents(gameController, game) {
-    var myElement = document.getElementById('canvas-wrapper');
+    var myElement = document.getElementById('playfield-screen');
     var hammertime = new Hammer(myElement, {});
-    var buttons = document.querySelectorAll('.button');
+    var buttons = document.querySelectorAll('.user-controls__button');
 
     hammertime.get('swipe')
     .set({ 
@@ -38,9 +38,14 @@ export function TouchEvents(gameController, game) {
         }
 
         if(ev.type === 'swipeup') {
-            config.sprite.border = -1;
-            config.sprite.type = 'rect';
-            game.event.emit('theme');
+            if(config.sprite.type === 'rect') {
+                config.sprite.border = 2;
+                config.sprite.type = 'sprite';
+            } else {
+                config.sprite.border = 2;
+                config.sprite.type = 'rect';
+            }
+             game.event.emit('theme');
         }
 
         if(ev.type === 'tap') {
@@ -78,11 +83,15 @@ export function TouchEvents(gameController, game) {
         
     })
 
-    document.querySelector('.start-button').addEventListener('click', (e) => {
+    document.querySelector('#start-screen__button-start').addEventListener('click', (e) => {
         // openFullscreen();
         game.activeStage('playfield');
         document.querySelector('.menu').style.display = 'none';
     });
+
+    setTimeout(() => {
+        // document.querySelector('#start-screen__button-start').click()
+    }, 100)
 
     function resetKeys() {
         game.pressedKeys[74] = false;

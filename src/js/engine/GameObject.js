@@ -19,7 +19,7 @@ export default class GameObject {
   render(ctx, state) {
     switch (this.props.type) {
       case 'rect':
-        // ctx.clearRect(this.lastProps.x, this.lastProps.y, this.lastProps.w, this.lastProps.h);
+        ctx.clearRect(this.lastProps.x-1, this.lastProps.y-1, this.lastProps.w+2, this.lastProps.h+2);
         ctx.fillStyle = this.props.color || '#fff';
         ctx.fillRect(this.props.x, this.props.y, this.props.w, this.props.h);
         break;
@@ -30,6 +30,7 @@ export default class GameObject {
         ctx.fillText(this.props.text, this.props.x, this.props.y);
         break;
       case 'sprite':
+        ctx.clearRect(this.lastProps.x-1, this.lastProps.y-1, this.lastProps.w+2, this.lastProps.h+2);
         const { w, h, x, y, sw, sh } = this.props;
         ctx.drawImage(
           this.sprite,

@@ -4,22 +4,22 @@ export function GameEvents(game) {
     const img = new Image()
     img.src = url;
     
-    document.querySelector('#gameinfo_next').innerHTML = '';
-    document.querySelector('#gameinfo_next').appendChild(img);
+    document.querySelector('#playfield-screen__info_next--value').innerHTML = '';
+    document.querySelector('#playfield-screen__info_next--value').appendChild(img);
   });
 
   game.event.on('score', (val) => {
-    document.querySelector('#gameinfo_scorea').innerHTML = val;
+    document.querySelector('#playfield-screen__info_score--value').innerHTML = val;
   })
 
   game.event.on('gameover', () => {
     game.activeStage('menu');
-    document.querySelector('.gameover').style.display = 'block';
-    document.querySelector('.restart-button').addEventListener('click', (e) => {
+    document.querySelector('#gameover-screen').style.display = 'block';
+    document.querySelector('#gameover-screen__restart-button').addEventListener('click', (e) => {
       // openFullscreen();
       game.activeStage('playfield');
       game.event.emit('reset');
-      document.querySelector('.gameover').style.display = 'none';
+      document.querySelector('#gameover-screen').style.display = 'none';
     });
   })
 }

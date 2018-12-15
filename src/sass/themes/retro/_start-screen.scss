@@ -1,0 +1,34 @@
+.start {
+    &-screen {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: #18132b;
+        z-index: 500;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        &__button-start {
+            border-radius: 6vw;
+            padding: 2% 10%;
+            margin: auto;
+            display: inline-block;
+            background: #27223e;
+            border: 1vw solid #b3b0c3;
+            color: #908aa7;
+            font-size: 2em;
+
+            user-select: none;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+
+            &:active {
+                background: #504680;
+            }
+        }
+    }
+}

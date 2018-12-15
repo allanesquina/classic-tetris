@@ -68,13 +68,21 @@ export default class Game {
     const time = Date.now() / 1000;
     if (time > this.lastTime + this.fps) {
       this.lastTime = time;
-      this.context.clearRect(0, 0, this.state.stage.width, this.state.stage.height);
+      // this.context.clearRect(0, 0, this.state.stage.width, this.state.stage.height);
       // this.canvas.width = this.canvas.width;
       this.walkThroughGameObjects((obj, i) => {
         (obj.stateToProp && obj.stateToProp(this.getGameEventObject()));
         (obj.onKeyDown && obj.onKeyDown(this.pressedKeys, this.getGameEventObject()));
         (obj.onEnterFrame && obj.onEnterFrame(this.getGameEventObject()));
-        obj.render(this.context, this.state);
+
+        if(obj.shouldRender) {
+          if(obj.shouldRender()) {
+            obj.render(this.context, this.state);
+          }
+        } else {
+          obj.render(this.context, this.state);
+        }
+
         (obj.onCollision && obj.onCollision(this.collisionCalc(obj, i), this.getGameEventObject()));
       });
     }
