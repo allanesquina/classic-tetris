@@ -17,8 +17,9 @@ import {
   var piecesImages =  new Map();
 
   function getNextPieceImage(type, game) {
-    const image = piecesImages.get(type);
+    const image = piecesImages.get(`${type}-${config.theme.className}`);
     if(!image) {
+      console.log('creating', type)
       const tmpImage = createNextPieceImage(game.state.matrixNext);
       piecesImages.set(`${type}-${config.theme.className}`, tmpImage);
       return tmpImage;
@@ -111,9 +112,13 @@ import {
   onInit(game) {
     this._reset(game);
 
-    game.event.on('reset', () => {
+    this.resetEventOff = game.event.on('reset', () => {
       this._reset(game);
     })
+  }
+  onDestroy() {
+    console.log('destroying controller')
+    this.resetEventOff();
   }
 
   _reset(game) {
@@ -152,10 +157,8 @@ import {
 
   onEnterFrame(game) {
     if(this.isPushing) {
-        this._movePiece(null, game)
-        this._movePiece(null, game)
-        this._movePiece(null, game)
-        return;
+      this._push(game, true);
+      this.isPushing = false;
     }
 
     if (this.paused) {
@@ -442,11 +445,11 @@ import {
       matrix: Object.assign(this.props.matrix)
     });
 
-    game.event.emit('nextPiece',  getNextPieceImage(this.nextPiece.type, game));
+    game.event.emit('nextPiece',  getNextPieceImage(this.nextPiece.type, game), this.nextPiece.type);
 
     // Emit new piece when the theme is changed
     game.event.on('theme', () => {
-      game.event.emit('nextPiece',  getNextPieceImage(this.nextPiece.type, game));
+      game.event.emit('nextPiece',  getNextPieceImage(this.nextPiece.type, game), this.nextPiece.type);
     })
   }
 
@@ -605,5 +608,39 @@ import {
       return;
     }
 
+  }
+
+  _push(game, remove) {
+
+    let {y, x, rotate, type} = game.state.currentPiece;
+    const oldCurrentPiecePosition = game.state.currentPiece;
+    let down = true;
+
+    if(remove) {
+      this._removeFromMatrix(oldCurrentPiecePosition);
+    }
+
+    y = y + 1
+    game.setState({
+      control: { down },
+      currentPiece: { type, rotate, x, y },
+    });
+
+
+    if(this._validate(game) != 'out-down' && this._validate(game) != 'colision') {
+      game.setState({
+        control: { down },
+        currentPiece: { type, rotate, x, y },
+      });
+      this._push(game);
+      return;
+    }
+
+    this._pushToMatrix(oldCurrentPiecePosition);
+    this._validateScore();
+    this._newPiece(game);
+    this.audioDrop.currentTime = 0;
+    this.audioDrop.play();
+    this.isPushing = false;
   }
 }
