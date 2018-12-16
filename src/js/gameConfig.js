@@ -1,14 +1,11 @@
+import SpriteSheet from '../assets/img/sprite3.png';
+import { themes } from './themes';
+
 export const config = {
     canvas: () => ({
-        height: ((config.matrix.height-2) * ((config.sprite.size * config.sprite.scale) + config.sprite.border)) + config.sprite.border,
-        width: (config.matrix.width  * ((config.sprite.size * config.sprite.scale) + config.sprite.border)) + config.sprite.border
+        height: ((config.matrix.height-2) * ((config.theme.sprite.size * config.theme.sprite.scale) + config.theme.sprite.border)) + config.theme.sprite.border,
+        width: (config.matrix.width  * ((config.theme.sprite.size * config.theme.sprite.scale) + config.theme.sprite.border)) + config.theme.sprite.border
     }),
-    sprite: {
-        size: 7,
-        scale: 2.3,
-        border: 2,
-        type: 'sprite',
-    },
     matrix: {
         width: 10,
         height: 24,
@@ -25,8 +22,8 @@ export const config = {
         control: { down: false },
     },
     render: {
-        fps: 60,
+        fps: 50,
     },
     skipLevelAt: 10,
-
+    theme: themes['digitalLight']
 };

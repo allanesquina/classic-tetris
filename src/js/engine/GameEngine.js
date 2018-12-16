@@ -8,9 +8,9 @@ export default class Game {
     this.canvas.width = w;
     this.canvas.height = h;
     this.context = this.canvas.getContext('2d');
-    this.context.imageSmoothingEnabled = true;
+    this.context.imageSmoothingEnabled = false;
     this.lastTime = Date.now() / 1000;
-    this.fps = fps ? (0.01666 / fps) * 60 : 0.013; // 60fps
+    this.fps = fps ? (0.013 / fps) * 60 : 0.013; // 60fps
     this.stages = {};
     this.state = {
       stage: {

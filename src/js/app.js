@@ -5,10 +5,12 @@ import SpriteSheet from '../assets/img/sprite3.png';
 import { TouchEvents } from './touchEvent';
 import { GameEvents } from './gameEvent';
 import { config } from './gameConfig';
+import { changeTheme } from './themes';
 
 export default function () {
 
   // Config
+
   let game = new Game('stage', config.canvas().width, config.canvas().height, config.render.fps);
   let playField = game.stage('playfield', config.initialState);
   let menu = game.stage('menu');
@@ -25,11 +27,10 @@ export default function () {
   });
 
   function createPiecesArea(playField) {
-    game.context.clearRect(0, 0, game.state.stage.width, game.state.stage.height);
     // Creating the pieces area
-    let spriteSize = config.sprite.size;
-    let pixelWidth = spriteSize * config.sprite.scale;
-    let border = config.sprite.border;
+    let spriteSize = config.theme.sprite.size;
+    let pixelWidth = spriteSize * config.theme.sprite.scale;
+    let border = config.theme.sprite.border;
     const matrixHeight = ((config.matrix.height-2) * ((pixelWidth + border))) + border;
     const matrixWidth = (config.matrix.width  * (pixelWidth + border));
 
@@ -37,8 +38,8 @@ export default function () {
       for (let j = 0, y = config.matrix.width; j < y; j++) {
         playField.connect(new Pixel({
           name: `Piece-${i+2}-${j}`,
-          type: config.sprite.type,
-          sprite: SpriteSheet,
+          type: config.theme.sprite.type,
+          sprite: config.theme.sprite.spriteSheet,
           sw: spriteSize,
           sh: spriteSize,
           x: 0 + (j * (pixelWidth + border)),

@@ -2,6 +2,7 @@ import GameObject from './engine/GameObject';
 import {
   PIECES_SPRITE_COLORS,
  } from './enum';
+import { config } from './gameConfig';
 
 export default class Pixel extends GameObject {
   constructor(props) {
@@ -26,8 +27,13 @@ export default class Pixel extends GameObject {
     if(!matrix) { return }
     if (matrix[this.props.refY] && matrix[this.props.refY][this.props.refX]) {
       const pos = matrix[this.props.refY][this.props.refX];
-      this.props.sx = pos.filled > 0 ? PIECES_SPRITE_COLORS[pos.type] : PIECES_SPRITE_COLORS['black'];
-      this.props.color = pos.filled > 0 ? '#CCCCCC' : '#000000';
+      if(config.theme.sprite.type === 'rect') {
+        this.props.color = pos.filled > 0 ? config.theme.color.filled : config.theme.color.empty;
+      }
+      if(config.theme.sprite.type === 'sprite') {
+        this.props.sx = pos.filled > 0 ? PIECES_SPRITE_COLORS[pos.type] : PIECES_SPRITE_COLORS['black'];
+      }
+      
     }
   }
 
@@ -36,6 +42,6 @@ export default class Pixel extends GameObject {
       this.firstRender = false;
       return true;
     }
-    return this.lastProps.sx != this.props.sx;
+    return this.lastProps.sx != this.props.sx || this.props.color != this.lastProps.color;
   }
 }

@@ -1,0 +1,33 @@
+.light-theme {
+    .user-controls {
+        z-index: 100;
+        bottom: 0;
+        text-align: center;
+        width: 100%;
+        background: #3a3a3a;
+        background: linear-gradient(174deg, #3a3a3a, #111);
+        border-top: .4em solid #111;
+        display: flex;
+
+        &__button {
+            padding: 15% 0%;
+            width: 19%;
+            height: 50vh;
+            margin: auto;
+            display: inline-block;
+            color: #908aa7;
+            font-size: 2em;
+            user-select: none;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+
+            transition: .1s;
+
+            &:active {
+                background-color: #3e3e3e;
+            }
+        }
+    }
+}

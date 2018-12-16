@@ -1,0 +1,96 @@
+$borderColor: #333;
+$borderSize: .1em;
+
+.light-theme {
+    .playfield {
+        &-screen {
+            background: #C5C5C5;
+            background: linear-gradient(174deg, #C5C5C5, #D0D0D0);
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+            padding-left: 1%;
+            display: flex;
+            flex-direction: row-reverse;
+
+            &__canvas {
+                flex-basis: 75%;
+                flex-shrink: none;
+                display: block;
+                z-index: 10;
+                width: 100%;
+                position: relative;
+            }
+
+            &__info {
+                right: 0;
+                z-index: 0;
+                border-left: $borderSize solid $borderColor;
+                border-right: $borderSize solid $borderColor;
+                flex-basis: 70%;
+
+                &__score {
+                    margin: 0 auto;
+                    min-height: 15%;
+                    padding: 10%;
+                    border-bottom: $borderSize solid $borderColor;
+
+                    &--value {
+                        display: block;
+                        font-size: 2em;
+                        color: #333;
+                    }
+                }
+
+                &__title {
+                    font-size: 1.5em;
+                    margin-bottom: 5%;
+                    display: block;
+                    color: #333;
+                }
+
+                &__next {
+                    margin: 0 auto;
+                    padding: 5% 10%;
+                    border-bottom: $borderSize solid $borderColor;
+
+                    &--value {
+                        display: block;
+
+                        img {
+                            display: block;
+                            width: 70%;
+                        }
+                    }
+                }
+
+                &__lines {
+                    margin: 0 auto;
+                    min-height: 15%;
+                    padding: 10%;
+                    border-bottom: $borderSize solid $borderColor;
+
+                    &--value {
+                        display: block;
+                        font-size: 2em;
+                        color: #333;
+                    }
+                }
+
+                &__level {
+                    margin: 0 auto;
+                    min-height: 15%;
+                    padding: 10%;
+
+                    &--value {
+                        color: #333;
+                        display: block;
+                        font-size: 2em;
+
+                    }
+                }
+            }
+        }
+    }
+}

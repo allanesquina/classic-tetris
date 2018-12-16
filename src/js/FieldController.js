@@ -8,7 +8,6 @@ import  DropAudioSrc from '../assets/audio/drop.ogg';
 import  MoveAudioSrc from '../assets/audio/move.wav';
 import  RotateAudioSrc from '../assets/audio/rotate.wav';
 import pieces from './pieces';
-import SpriteSheet2 from '../assets/img/sprite2.png';
 import { config } from './gameConfig';
 import {
   PIECES_SPRITE_COLORS,
@@ -16,14 +15,12 @@ import {
  } from './enum';
 
   var piecesImages =  new Map();
-  let sprite =  new Image();
-  sprite.src = SpriteSheet2;
 
   function getNextPieceImage(type, game) {
     const image = piecesImages.get(type);
     if(!image) {
       const tmpImage = createNextPieceImage(game.state.matrixNext);
-      piecesImages.set(type, tmpImage);
+      piecesImages.set(`${type}-${config.theme.className}`, tmpImage);
       return tmpImage;
     }
 
@@ -33,13 +30,18 @@ import {
   function createNextPieceImage(matrix) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
 
-    let spriteSize = config.sprite.size;
-    let pw = spriteSize * config.sprite.scale;
-    let border = config.sprite.border;
+    let sprite =  new Image();
+    sprite.src = config.theme.sprite.spriteSheet;
+
+    let spriteSize = config.theme.sprite.size;
+    let pw = spriteSize * config.theme.sprite.scale;
+    let border = config.theme.sprite.border;
     let sx = 0;
     const imageHeight = matrix.length * (pw + border);
     const imageWidth = matrix[0].length * (pw + border);
+    let pos;
 
     canvas.width = imageWidth;
     canvas.height = imageHeight;
@@ -48,20 +50,32 @@ import {
       for (let j = 0, y = config.matrixNext.width; j < y; j++) {
 
         if (matrix[i] && matrix[i][j]) {
-          const pos = matrix[i][j];
-          sx = pos.filled > 0 ? PIECES_SPRITE_COLORS[pos.type] : PIECES_SPRITE_COLORS['black'];
+          pos = matrix[i][j];
+          switch (config.theme.sprite.type) {
+            case 'rect':
+              ctx.fillStyle = pos.filled > 0 ? config.theme.color.filled : 'rgba(0,0,0,0)';
+              ctx.fillRect((j * (pw + border)), (i * (pw + border)), pw, pw);
+              break;
+            case 'sprite':
+              sx = pos.filled > 0 ? PIECES_SPRITE_COLORS[pos.type] : PIECES_SPRITE_COLORS['black'];
+              ctx.drawImage(
+                sprite,
+                sx, 0, spriteSize, spriteSize,
+                (j * (pw + border)), (i * (pw + border)),
+                pw, pw 
+              );
+            break;
+          default:
         }
-        ctx.drawImage(
-          sprite,
-          sx, 0, spriteSize, spriteSize,
-          (j * (pw + border)), (i * (pw + border)),
-          pw, pw 
-        );
+
+    }
       }
     }
     
     return canvas.toDataURL();
   }
+
+
 
   export default class FieldController extends Game.GameObject {
   constructor(props) {
@@ -86,11 +100,11 @@ import {
 
     this.delayBlock150 = throttle((cb) => {
       cb()
-    }, 120);
+    }, 0);
 
     this.delayBlock50 = throttle((cb) => {
       cb();
-    }, 60);
+    }, 0);
 
   }
 
@@ -111,6 +125,14 @@ import {
     game.setState({score: 0});
     this._newPiece(game);
     this.paused = false;
+    // PIECES_TYPES.forEach((p, index) => {
+    //   console.log(p)
+    //   const matrix = this._createMatrix(config.matrixNext.width, config.matrixNext.height);
+    //   const piece =  this._createPiece(index);
+    //   this._pushToMatrix(piece, matrix);
+    //   getNextPieceImage(matrix, game);
+    //   console.table(matrix)
+    // })
   }
 
   _createMatrix(width, height) {
@@ -385,7 +407,11 @@ import {
   }
 
   _randomPiece() {
-    return { type: PIECES_TYPES[this._getRandom()], rotate: 0, x: 0, y: 0 };
+    return this._createPiece(this._getRandom());
+  }
+
+  _createPiece(type) {
+    return { type: PIECES_TYPES[type], rotate: 0, x: 0, y: 0 };
   }
 
   _handleNextPiece(game) {
@@ -417,6 +443,11 @@ import {
     });
 
     game.event.emit('nextPiece',  getNextPieceImage(this.nextPiece.type, game));
+
+    // Emit new piece when the theme is changed
+    game.event.on('theme', () => {
+      game.event.emit('nextPiece',  getNextPieceImage(this.nextPiece.type, game));
+    })
   }
 
   _newPiece(game) {

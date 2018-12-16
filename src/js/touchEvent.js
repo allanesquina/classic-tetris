@@ -1,4 +1,5 @@
 import { config } from './gameConfig';
+import { changeTheme } from './themes';
 
 // Touch events by using Hammerjs
 export function TouchEvents(gameController, game) {
@@ -38,14 +39,8 @@ export function TouchEvents(gameController, game) {
         }
 
         if(ev.type === 'swipeup') {
-            if(config.sprite.type === 'rect') {
-                config.sprite.border = 2;
-                config.sprite.type = 'sprite';
-            } else {
-                config.sprite.border = 2;
-                config.sprite.type = 'rect';
-            }
-             game.event.emit('theme');
+
+            changeTheme('digitalLight', game);
         }
 
         if(ev.type === 'tap') {

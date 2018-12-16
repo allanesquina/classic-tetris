@@ -12,6 +12,11 @@ export function GameEvents(game) {
     document.querySelector('#playfield-screen__info_score--value').innerHTML = val;
   })
 
+  game.event.on('theme', (newTheme, lastTheme) => {
+    document.querySelector('#interface-wrapper').classList.remove(lastTheme);
+    document.querySelector('#interface-wrapper').classList.add(newTheme);
+  })
+
   game.event.on('gameover', () => {
     game.activeStage('menu');
     document.querySelector('#gameover-screen').style.display = 'block';
