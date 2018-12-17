@@ -22,6 +22,7 @@ export default class GameObject {
         ctx.clearRect(this.lastProps.x-1, this.lastProps.y-1, this.lastProps.w+2, this.lastProps.h+2);
         ctx.fillStyle = this.props.color || '#fff';
         ctx.fillRect(this.props.x, this.props.y, this.props.w, this.props.h);
+        // console.log(this.props.y, this.lastProps.y)
         break;
       case 'text':
         // ctx.clearRect(this.lastProps.x, this.lastProps.y, 200, 200);

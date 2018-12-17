@@ -11,7 +11,7 @@ export const themes = {
         },
         sprite: {
             size: 7,
-            scale: 2.3,
+            scale: 2,
             border: 2,
             type: 'rect',
             spriteSheet: SpriteSheet,

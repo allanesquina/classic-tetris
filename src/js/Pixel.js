@@ -9,6 +9,7 @@ export default class Pixel extends GameObject {
     super(props);
     this.props = props;
     this.firstRender = true;
+    this.isAnimating = false;
   }
 
   onInit(game) {
@@ -20,7 +21,6 @@ export default class Pixel extends GameObject {
   onDestroy() {
     this.themeEventOff();
   }
-
 
   onEnterFrame(game) {
     const matrix = game.state[this.props.matrix];
@@ -38,10 +38,13 @@ export default class Pixel extends GameObject {
   }
 
   shouldRender(game) {
+    return true;
     if(this.firstRender) {
       this.firstRender = false;
       return true;
     }
-    return this.lastProps.sx != this.props.sx || this.props.color != this.lastProps.color;
+    return this.lastProps.sx != this.props.sx || 
+      this.props.color != this.lastProps.color || 
+      this.props.y != this.lastProps.y;
   }
 }

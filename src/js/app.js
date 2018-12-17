@@ -16,6 +16,7 @@ export default function () {
   let menu = game.stage('menu');
 
   let fieldController = new FieldController({
+    id: 'gameController',
     name: 'FieldController',
     type: 'ctrl'
   });
@@ -38,6 +39,7 @@ export default function () {
       for (let j = 0, y = config.matrix.width; j < y; j++) {
         playField.connect(new Pixel({
           name: `Piece-${i+2}-${j}`,
+          id: `Piece-${i+2}-${j}`,
           type: config.theme.sprite.type,
           sprite: config.theme.sprite.spriteSheet,
           sw: spriteSize,
@@ -56,6 +58,7 @@ export default function () {
 
     // Create a line at the bottom of the matrix
     playField.connect(game.object({
+      id: 'lineBottom1',
       type: 'rect',
       color: '#000',
       x: 0,
@@ -65,6 +68,7 @@ export default function () {
     }))
 
     playField.connect(game.object({
+      id: 'lineBottom2',
       type: 'rect',
       color: '#0c0c0c',
       x: 0,

@@ -99,13 +99,15 @@ import {
     this.audioLineTriple.volume = .5;
     this.audioLineTetris.volume = .5
 
+    this.animationCount = 0;
+
     this.delayBlock150 = throttle((cb) => {
       cb()
-    }, 0);
+    }, 180);
 
     this.delayBlock50 = throttle((cb) => {
       cb();
-    }, 0);
+    }, 180);
 
   }
 
@@ -155,6 +157,51 @@ import {
     return pieces[type][rotate];
   }
 
+  _test(game) {
+    let startPoint = this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length-1];
+
+    startPoint = startPoint + this.animationCount;
+
+    while(startPoint--) {
+      const row = config.matrix.width;
+      for ( let i = 0, l = row; i < row; i++) {
+        const obj = game.object.get(`Piece-${startPoint}-${i}`);
+        if(obj) {
+          obj.props.y = obj.props.y + 2;
+        }
+      }
+    }
+  }
+
+  _setMatrixReferenceOnPixel(game) {
+    let startPoint = this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length-1];
+
+    startPoint = startPoint + this.animationCount;
+
+    while(startPoint--) {
+      const row = config.matrix.width;
+      for ( let i = 0, l = row; i < row; i++) {
+        const obj = game.object.get(`Piece-${startPoint}-${i}`);
+        if(obj) {
+          obj.props.refY = obj.props.refY + 1;
+          game.object.changeId(obj, `Piece-${obj.props.refY}-${i}`)
+        }
+      }
+    }
+  }
+
+  _removeLineFromCanvas(line, game) {
+      for( let i = 0, l =  config.matrix.width; i < l; i++) {
+        let obj = game.object.get(`Piece-${line}-${i}`);
+        if(obj) {
+          obj.props.y = -((config.theme.sprite.size * config.theme.sprite.scale) + config.theme.sprite.border);
+          // obj.props.y = 0;
+          obj.props.refY = 1;
+          game.object.changeId(obj, `Piece-1-${i}`)
+        }
+      }
+  }
+
   onEnterFrame(game) {
     if(this.isPushing) {
       this._push(game, true);
@@ -162,20 +209,90 @@ import {
     }
 
     if (this.paused) {
+
+      // --START LOOP 
+      // - remove current line from canvas
+      // - animate pixels till the new position 
+      // - reset height to be animated
+      // - remove current line from matrix
+      // - change the reference on the piexls
+      // - change the pixel ID for the new reference
+      // - remove last line from the `lines to be removed` array
+      // - incrise animationCount
+      // --END LOOP 
+
+      if(this.isRepositionMatrixAnimation) {
+        const time = Date.now() / 1000;
+        if (time > this.lastTime + 0) {
+
+          this.lastTime = time;
+           // For each line to be removed
+          if(this.linesToBeRemovedTmp.length > 0) {
+            this.paused = true;
+
+            // Height for each pixel move down 
+            if(this.lineHeightToBeRepositioned > 0) {
+              // Call reorder
+              this._test(game);
+
+              // Decrise hight
+              this.lineHeightToBeRepositioned--;
+            }
+            // Go to the next line
+            else {
+              // Reset hight
+              this.lineHeightToBeRepositioned = ((config.theme.sprite.size * config.theme.sprite.scale) + config.theme.sprite.border) / 2;
+
+              // Remove the current line from matrix
+              this._removeLinesFromMatrixExp(this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length - 1] + this.animationCount);
+
+              // Rearange matrix references from pixel
+              this._setMatrixReferenceOnPixel(game);
+
+              // Remove last line from tmp array
+              const line = this.linesToBeRemovedTmp.pop();
+              
+              // Incrise animationCount
+              this.animationCount = this.animationCount + 1;
+
+              // Remove the next last line from canvas
+              this._removeLineFromCanvas(this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length - 1] + this.animationCount, game);
+            }
+          } 
+            // If there are no more lines to remove
+          else {
+            // Stop animation
+            this.isRepositionMatrixAnimation = false;
+
+            // Run the game
+            this.paused = false;
+          }
+        }
+      } 
+
       if (this.isRemovingLines) {
         const time = Date.now() / 1000;
-        if (time > this.lastTime + 0.015) {
+        if (time > this.lastTime + 0.005) {
           this.lastTime = time;
+
           this.currentPixel = this.currentPixel > 0 ? this.currentPixel : 0;
           this._walkThroughLinesToBeRemoved(this.currentPixel);
 
           if (this.currentPixel === config.matrix.width + 1) {
-            this._removeLinesFromMatrix(this.linesToBeRemoved);
             this.currentPixel = 0;
-            this.paused = false;
             this.isRemovingLines = false;
             this._updateScore(this.linesToBeRemoved.length, game);
             this._updateLines(this.linesToBeRemoved.length, game);
+
+
+            // Animation to down
+            this.isRepositionMatrixAnimation = true;
+            this.lineHeightToBeRepositioned = ((config.theme.sprite.size * config.theme.sprite.scale) + config.theme.sprite.border) / 2;
+            this.linesToBeRemovedTmp = this.linesToBeRemoved.concat();
+            this.animationCount = 0;
+            // Remove the last line from canvas
+            this._removeLineFromCanvas(this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length - 1], game);
+
           } else {
             this.currentPixel++;
           }
@@ -292,7 +409,7 @@ import {
         line = this.props.matrix[i][j].filled > 0 ? line + 1 : line;
       }
 
-      // Save the line which has all pieces filled
+      // Save the line that has all pieces filled
       if (line == y) {
         lines.push(i);
       }
@@ -309,6 +426,11 @@ import {
 
   _setLinesToBeremoved(lines) {
     this.linesToBeRemoved = lines;
+  }
+
+  _removeLinesFromMatrixExp(line) {
+    let rest = this.props.matrix.splice(line, 1);
+    this.props.matrix.unshift(this._emptyAllPixelsFromLine(rest));
   }
 
   _removeLinesFromMatrix(lines) {
@@ -421,19 +543,9 @@ import {
     this.nextPiece = this.nextPiece || this._randomPiece();
     const piece = this.nextPiece;
 
-
-    this.nextPiece.x = 1;
-    this.nextPiece.y = 1;
-
     this._removeFromMatrix(this.nextPiece, this.props.matrixNext);
-
     this.nextPiece = this._randomPiece();
-
-    this.nextPiece.x = 1;
-    this.nextPiece.y = 1;
-
     this._pushToMatrix(this.nextPiece, this.props.matrixNext);
-
 
     piece.x = parseInt(config.matrix.width / 2);
     piece.y = 1;

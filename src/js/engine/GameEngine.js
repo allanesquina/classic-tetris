@@ -38,6 +38,11 @@ export default class Game {
       setGlobalState: this.setState,
       event: this.event,
       objlength: Object.keys(this.zone.objs).length,
+      object: {
+        get: this.zone.getObject,
+        getList: () => this.zone.objs,
+        changeId: this.zone.changeObjectId,
+      },
     };
   }
 

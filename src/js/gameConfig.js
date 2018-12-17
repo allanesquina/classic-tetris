@@ -11,8 +11,8 @@ export const config = {
         height: 24,
     },
     matrixNext: {
-        width: 6,
-        height: 6,
+        width: 4,
+        height: 3,
     },
     initialState: {
         score: `0`, 
@@ -22,7 +22,7 @@ export const config = {
         control: { down: false },
     },
     render: {
-        fps: 30,
+        fps: 60,
     },
     skipLevelAt: 10,
     theme: themes['digitalLight']
