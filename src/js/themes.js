@@ -1,6 +1,6 @@
 import { config } from './gameConfig';
 import SpriteSheet from '../assets/img/sprite2.png';
-import { last } from 'rxjs/operators';
+import SpriteSheet2 from '../assets/img/sprite3.png';
 
 export const themes = {
     digitalLight: {

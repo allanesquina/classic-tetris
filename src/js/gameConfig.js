@@ -22,7 +22,7 @@ export const config = {
         control: { down: false },
     },
     render: {
-        fps: 60,
+        fps: 80,
     },
     skipLevelAt: 10,
     theme: themes['digitalLight']

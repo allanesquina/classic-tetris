@@ -22,6 +22,9 @@ export default class Pixel extends GameObject {
     this.themeEventOff();
   }
 
+  onCollision(objs, game) {
+  }
+
   onEnterFrame(game) {
     const matrix = game.state[this.props.matrix];
     if(!matrix) { return }
@@ -38,11 +41,10 @@ export default class Pixel extends GameObject {
   }
 
   shouldRender(game) {
-    return true;
     if(this.firstRender) {
-      this.firstRender = false;
       return true;
     }
+
     return this.lastProps.sx != this.props.sx || 
       this.props.color != this.lastProps.color || 
       this.props.y != this.lastProps.y;

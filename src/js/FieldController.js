@@ -19,7 +19,6 @@ import {
   function getNextPieceImage(type, game) {
     const image = piecesImages.get(`${type}-${config.theme.className}`);
     if(!image) {
-      console.log('creating', type)
       const tmpImage = createNextPieceImage(game.state.matrixNext);
       piecesImages.set(`${type}-${config.theme.className}`, tmpImage);
       return tmpImage;
@@ -103,11 +102,11 @@ import {
 
     this.delayBlock150 = throttle((cb) => {
       cb()
-    }, 180);
+    }, 80);
 
     this.delayBlock50 = throttle((cb) => {
       cb();
-    }, 180);
+    }, 80);
 
   }
 
@@ -119,7 +118,6 @@ import {
     })
   }
   onDestroy() {
-    console.log('destroying controller')
     this.resetEventOff();
   }
 
@@ -128,7 +126,7 @@ import {
     this.props.matrixNext = this._createMatrix(config.matrixNext.width, config.matrixNext.height);
     this.linesCount = 0;
     this.currentLevel = 1;
-    this.tab_probability = [1, 1, 1, 1, 1, 1, 1];
+    this.tabProbability = [1, 1, 1, 1, 1, 1, 1];
     game.setState({score: 0});
     this._newPiece(game);
     this.paused = false;
@@ -157,17 +155,18 @@ import {
     return pieces[type][rotate];
   }
 
-  _test(game) {
+  _reorder(val, game) {
     let startPoint = this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length-1];
 
-    startPoint = startPoint + this.animationCount;
+    startPoint = startPoint + this.animationLineCount;
 
     while(startPoint--) {
       const row = config.matrix.width;
       for ( let i = 0, l = row; i < row; i++) {
         const obj = game.object.get(`Piece-${startPoint}-${i}`);
         if(obj) {
-          obj.props.y = obj.props.y + 2;
+          obj.props.y = obj.props.y + val;
+          obj.firstRender = true;
         }
       }
     }
@@ -176,7 +175,7 @@ import {
   _setMatrixReferenceOnPixel(game) {
     let startPoint = this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length-1];
 
-    startPoint = startPoint + this.animationCount;
+    startPoint = startPoint + this.animationLineCount;
 
     while(startPoint--) {
       const row = config.matrix.width;
@@ -205,6 +204,7 @@ import {
   onEnterFrame(game) {
     if(this.isPushing) {
       this._push(game, true);
+      this._updateScore(10, game);
       this.isPushing = false;
     }
 
@@ -221,54 +221,59 @@ import {
       // - incrise animationCount
       // --END LOOP 
 
-      if(this.isRepositionMatrixAnimation) {
-        const time = Date.now() / 1000;
-        if (time > this.lastTime + 0) {
+      // if(this.isRepositionMatrixAnimation) {
+      //   const time = Date.now() / 1000;
+      //   if (time > this.lastTime + 0) {
 
-          this.lastTime = time;
-           // For each line to be removed
-          if(this.linesToBeRemovedTmp.length > 0) {
-            this.paused = true;
+      //     this.lastTime = time;
+      //      // For each line to be removed
+      //     if(this.linesToBeRemovedTmp.length > 0) {
+      //       this.paused = true;
 
-            // Height for each pixel move down 
-            if(this.lineHeightToBeRepositioned > 0) {
-              // Call reorder
-              this._test(game);
+      //       const size = this.lineHeightToBeRepositioned / this.animationVelocity;
 
-              // Decrise hight
-              this.lineHeightToBeRepositioned--;
-            }
-            // Go to the next line
-            else {
-              // Reset hight
-              this.lineHeightToBeRepositioned = ((config.theme.sprite.size * config.theme.sprite.scale) + config.theme.sprite.border) / 2;
+      //       // Height for each pixel move down 
+      //       if((size * this.animationCount) < this.lineHeightToBeRepositioned) {
 
-              // Remove the current line from matrix
-              this._removeLinesFromMatrixExp(this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length - 1] + this.animationCount);
+      //         // Call reorder
+      //         // this._reorder(size, game);
 
-              // Rearange matrix references from pixel
-              this._setMatrixReferenceOnPixel(game);
+      //         this.animationCount += 1;
+      //       }
+      //       // Go to the next line
+      //       else {
+      //         // Remove the current line from matrix
+      //         this._removeLinesFromMatrixExp(this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length - 1] + this.animationLineCount);
 
-              // Remove last line from tmp array
-              const line = this.linesToBeRemovedTmp.pop();
+      //         // Rearange matrix references from pixel
+      //         this._setMatrixReferenceOnPixel(game);
+
+      //         // Remove last line from tmp array
+      //         const line = this.linesToBeRemovedTmp.pop();
               
-              // Incrise animationCount
-              this.animationCount = this.animationCount + 1;
+      //         // Incrise animationCount
+      //         this.animationCount = 0;
 
-              // Remove the next last line from canvas
-              this._removeLineFromCanvas(this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length - 1] + this.animationCount, game);
-            }
-          } 
-            // If there are no more lines to remove
-          else {
-            // Stop animation
-            this.isRepositionMatrixAnimation = false;
+      //         // Incrise animationLineCount
+      //         this.animationLineCount += 1;
 
-            // Run the game
-            this.paused = false;
-          }
-        }
-      } 
+      //         // Remove the next last line from canvas
+      //         this._removeLineFromCanvas(this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length - 1] + this.animationLineCount, game);
+      //       }
+      //     } 
+      //       // If there are no more lines to remove
+      //     else {
+      //       // Stop animation
+      //       this.isRepositionMatrixAnimation = false;
+      //       // Run the game
+      //       this.paused = false;
+      //       window.gameinterval = 0;
+
+      //     }
+      //   }
+      //   return;
+      // } 
+
 
       if (this.isRemovingLines) {
         const time = Date.now() / 1000;
@@ -283,15 +288,20 @@ import {
             this.isRemovingLines = false;
             this._updateScore(this.linesToBeRemoved.length, game);
             this._updateLines(this.linesToBeRemoved.length, game);
-
+            this._removeLinesFromMatrix(this.linesToBeRemoved);
+            this.linesToBeRemoved = [];
+            this.paused = false;
 
             // Animation to down
-            this.isRepositionMatrixAnimation = true;
-            this.lineHeightToBeRepositioned = ((config.theme.sprite.size * config.theme.sprite.scale) + config.theme.sprite.border) / 2;
-            this.linesToBeRemovedTmp = this.linesToBeRemoved.concat();
-            this.animationCount = 0;
-            // Remove the last line from canvas
-            this._removeLineFromCanvas(this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length - 1], game);
+            // this.isRepositionMatrixAnimation = true;
+            // this.linesToBeRemovedTmp = this.linesToBeRemoved.concat();
+            // this.animationLineCount = 0;
+            // this.animationCount = 0;
+            // this.animationVelocity = 3; 
+            // this.lineHeightToBeRepositioned = ((config.theme.sprite.size * config.theme.sprite.scale) + config.theme.sprite.border);
+            // window.gameinterval = 0;
+            // // Remove the last line from canvas
+            // this._removeLineFromCanvas(this.linesToBeRemovedTmp[this.linesToBeRemovedTmp.length - 1], game);
 
           } else {
             this.currentPixel++;
@@ -327,6 +337,7 @@ import {
     let level = parseInt(game.state.level);
     game.setState({level: level + 1});
     this.currentLevel = level + 1; 
+    game.event.emit('level', this.currentLevel);
   }
 
   _updateLines(linesNumber, game) {
@@ -338,6 +349,7 @@ import {
     let lines = parseInt(game.state.lines);
     lines = lines + linesNumber;
     game.setState({lines});
+    game.event.emit('line', lines);
   }
 
   _updateScore(linesNumber, game) {
@@ -368,7 +380,6 @@ import {
 
     game.setState({score});
     game.event.emit('score', score)
-
   }
 
 
@@ -382,20 +393,20 @@ import {
     // find random number according to probability
     var rand = Math.random()*7;
     var stop = 0;
-    rand -= this.tab_probability[stop];
+    rand -= this.tabProbability[stop];
     while (rand > 0) {
       stop++;
       if (stop > 6) {
         break;
       };
-      rand -= this.tab_probability[stop];
+      rand -= this.tabProbability[stop];
     }
     // redistribute probability
-    var to_distribute = this.tab_probability[stop] * .5;
-    this.tab_probability[stop] *=  .5;
+    var toDistribute = this.tabProbability[stop] * .5;
+    this.tabProbability[stop] *=  .5;
     for (var j = 0; j < 7; j++) {
       if (j != stop) {
-        this.tab_probability[j] += to_distribute / 6;
+        this.tabProbability[j] += toDistribute / 6;
       };
     }
     return stop;

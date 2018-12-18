@@ -2,10 +2,11 @@
 export function GameEvents(game) {
     const $next = document.querySelector('#playfield-screen__info_next--value');
     const $score = document.querySelector('#playfield-screen__info_score--value');
+    const $level = document.querySelector('#playfield-screen__info_level--value');
+    const $lines = document.querySelector('#playfield-screen__info_lines--value');
     var images = new Map();
 
   game.event.on('nextPiece', (url, type) => {
-    console.log(type)
     let tmpImg = images.get(type);
     if(!tmpImg) {
       const img = new Image()
@@ -21,6 +22,14 @@ export function GameEvents(game) {
 
   game.event.on('score', (val) => {
     $score.innerHTML = val;
+  })
+
+  game.event.on('level', (val) => {
+    $level.innerHTML = val;
+  })
+
+  game.event.on('line', (val) => {
+    $lines.innerHTML = val;
   })
 
   game.event.on('theme', (newTheme, lastTheme) => {

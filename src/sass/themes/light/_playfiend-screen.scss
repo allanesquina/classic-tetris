@@ -4,7 +4,7 @@ $borderSize: .1em;
 .light-theme {
     .playfield {
         &-screen {
-            background: #C5C5C5;
+            background: #c5c5c5;
             background: linear-gradient(174deg, #C5C5C5, #D0D0D0);
             position: relative;
             width: 100%;
@@ -21,6 +21,7 @@ $borderSize: .1em;
                 z-index: 10;
                 width: 100%;
                 position: relative;
+                transform: translateZ(0);
             }
 
             &__info {

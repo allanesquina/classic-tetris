@@ -38,6 +38,7 @@ export default class Game {
       setGlobalState: this.setState,
       event: this.event,
       objlength: Object.keys(this.zone.objs).length,
+      getInstance: () => this,
       object: {
         get: this.zone.getObject,
         getList: () => this.zone.objs,
@@ -69,28 +70,40 @@ export default class Game {
     this.render();
   }
 
+  forceRenderAllObjectsOnce() {
+    this.forceRenderStatus = true;
+  }
+
   render() {
     const time = Date.now() / 1000;
-    if (time > this.lastTime + this.fps) {
+    // if (time > this.lastTime + this.fps) {
+    if (!this.isWalking) {
+
       this.lastTime = time;
-      // this.context.clearRect(0, 0, this.state.stage.width, this.state.stage.height);
+      if(this.clearCanvasEnabled) {
+        this.context.clearRect(0, 0, this.state.stage.width, this.state.stage.height);
       // this.canvas.width = this.canvas.width;
+      }
+
       this.walkThroughGameObjects((obj, i) => {
         (obj.stateToProp && obj.stateToProp(this.getGameEventObject()));
         (obj.onKeyDown && obj.onKeyDown(this.pressedKeys, this.getGameEventObject()));
         (obj.onEnterFrame && obj.onEnterFrame(this.getGameEventObject()));
 
         if(obj.shouldRender) {
-          if(obj.shouldRender()) {
-            obj.render(this.context, this.state);
+          if(obj.shouldRender() || this.forceRenderStatus || this.clearCanvasEnabled) {
+            (obj.onCollision && obj.onCollision(this.collisionCalc(obj, i), this.getGameEventObject()));
+            obj.render(this.context, this.state, this);
           }
         } else {
-          obj.render(this.context, this.state);
+          obj.render(this.context, this.state, this);
+          (obj.onCollision && obj.onCollision(this.collisionCalc(obj, i), this.getGameEventObject()));
         }
 
-        (obj.onCollision && obj.onCollision(this.collisionCalc(obj, i), this.getGameEventObject()));
       });
     }
+
+    this.forceRenderStatus = false;
 
     this.cicle();
   }
@@ -99,12 +112,40 @@ export default class Game {
     const objs = this.zone.objs;
     const objsKeys = Object.keys(objs);
 
-    for (let i=0, l = objsKeys.length; i < l; i += 1) {
-      const obj = objs[objsKeys[i]];
-      if (obj) {
-        fn(obj, i);
+    if(window.debug) {
+
+      let len = objsKeys.length;
+      let i = 0;
+
+      this.isWalking = true;
+
+      const interval = setInterval(() => {
+        const obj = objs[objsKeys[i]];
+        if (obj) {
+          fn(obj, i);
+        }
+        if(i < len) {
+          i++
+        } else {
+          clearInterval(interval);
+          this.isWalking = false;
+        }
+
+        if(window.game_cancelinterval) {
+          clearInterval(interval);
+          this.isWalking = false;
+        }
+      }, window.gameinterval || 0)
+    } else {
+      for (let i=0, l = objsKeys.length; i < l; i += 1) {
+        const obj = objs[objsKeys[i]];
+        if (obj) {
+          fn(obj, i);
+        }
       }
     }
+    
+
   }
 
   activeStage(stage) {
