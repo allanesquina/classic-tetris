@@ -22,8 +22,8 @@ export const config = {
         control: { down: false },
     },
     render: {
-        fps: 80,
+        fps: 40,
     },
     skipLevelAt: 10,
-    theme: themes['digitalLight']
+    theme: themes['retro']
 };

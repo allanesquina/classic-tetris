@@ -30,7 +30,7 @@ export default function () {
   function createPiecesArea(playField) {
     // Creating the pieces area
     let spriteSize = config.theme.sprite.size;
-    let pixelWidth = spriteSize * config.theme.sprite.scale;
+    let pixelWidth = parseInt(spriteSize * config.theme.sprite.scale);
     let border = config.theme.sprite.border;
     const matrixHeight = ((config.matrix.height-2) * ((pixelWidth + border))) + border;
     const matrixWidth = (config.matrix.width  * (pixelWidth + border));
@@ -56,26 +56,26 @@ export default function () {
       }
     }
 
-    // Create a line at the bottom of the matrix
-    playField.connect(game.object({
-      id: 'lineBottom1',
-      type: 'rect',
-      color: '#000',
-      x: 0,
-      y: matrixHeight,
-      w: matrixWidth,
-      h: 2
-    }))
+    // // Create a line at the bottom of the matrix
+    // playField.connect(game.object({
+    //   id: 'lineBottom1',
+    //   type: 'rect',
+    //   color: '#000',
+    //   x: 0,
+    //   y: matrixHeight,
+    //   w: matrixWidth,
+    //   h: 2
+    // }))
 
-    playField.connect(game.object({
-      id: 'lineBottom2',
-      type: 'rect',
-      color: '#0c0c0c',
-      x: 0,
-      y: matrixHeight + 1,
-      w: matrixWidth,
-      h: 140
-    }))
+    // playField.connect(game.object({
+    //   id: 'lineBottom2',
+    //   type: 'rect',
+    //   color: '#0c0c0c',
+    //   x: 0,
+    //   y: matrixHeight + 1,
+    //   w: matrixWidth,
+    //   h: 1
+    // }))
   }
 
   // Init game config

@@ -2,7 +2,8 @@ export default class GameObject {
   constructor(props = {}) {
     this.props = props;
     this.lastProps = Object.assign({}, props);
-    this.lastTime = Date.now() / 1000;
+    this.lastTime = 0;
+    this.lastTimeList = new Map();
 
     if (props.sprite) {
       this.sprite =  new Image();

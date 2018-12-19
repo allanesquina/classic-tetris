@@ -1,93 +1,111 @@
-.theme {
+$borderColor: #333;
+$borderSize: .1em;
+$titleColor: #000;
+$valueColor: #000;
+$fontSize: 1.5em;
+
+body {
+    background: #000;
+    font-family: 'Arial';
+}
+
+.retro-theme {
     .playfield {
         &-screen {
-            background: #000;
-            background: linear-gradient(174deg, #111129, #000000);
-            background-size: 400% 400%;
-
-            // -webkit-animation: canvasbg 17s ease infinite;
-            // -moz-animation: canvasbg 17s ease infinite;
-            // animation: canvasbg 17s ease infinite;
-
+            background: #a4b6ad;
+            background: linear-gradient(174deg, #a4b6ad, #9faca6);
             position: relative;
             width: 100%;
-            max-width: 500px;
             margin: auto;
-            padding-left: 1%;
             display: flex;
             flex-direction: row-reverse;
+            border-top: .4em solid #000;
 
-            &__canvas {
-                flex-basis: 70%;
+            &__canvas-wrapper {
+                padding-left: 1%;
+                flex-basis: 100%;
                 flex-shrink: none;
                 display: block;
                 z-index: 10;
                 width: 100%;
                 position: relative;
+                transform: translateZ(0);
+                border-left: $borderSize solid $borderColor;
+                border-right: $borderSize solid $borderColor;
+                padding-top: .4em;
+            }
+
+            &__canvas {
+                width: 100%;
+                opacity: .9;
             }
 
             &__info {
                 right: 0;
                 z-index: 0;
-                border-left: .1rem solid #292440;
-                flex-basis: 70%;
+                flex-basis: 65%;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                padding: 5% 0;
 
                 &__score {
                     margin: 0 auto;
-                    min-height: 15%;
+                    min-height: 20%;
                     padding: 10%;
-                    border-bottom: 2px solid #292440;
 
                     &--value {
                         display: block;
-                        font-size: 1.5em;
-
+                        font-size: $fontSize;
+                        color: $valueColor;
                     }
                 }
 
                 &__title {
-                    font-size: 1.5em;
-                    margin-bottom: 15%;
+                    margin-bottom: 20%;
                     display: block;
-
+                    color: #000;
+                    font-size: $fontSize;
+                    text-transform: capitalize;
                 }
 
                 &__next {
                     margin: 0 auto;
                     padding: 5% 10%;
-                    border-bottom: 2px solid #292440;
+                    min-height: 20%;
 
                     &--value {
-                        img {
-                            display: block;
-                            width: 50%;
-                        }
                         display: block;
 
+                        img {
+                            display: inline-block;
+                            width: 95%;
+                        }
                     }
                 }
 
                 &__lines {
                     margin: 0 auto;
-                    min-height: 15%;
+                    min-height: 20%;
                     padding: 10%;
-                    border-bottom: 2px solid #292440;
 
                     &--value {
                         display: block;
-                        font-size: 2em;
-
+                        color: $valueColor;
+                        font-size: $fontSize;
                     }
                 }
 
                 &__level {
                     margin: 0 auto;
-                    min-height: 15%;
+                    min-height: 25%;
                     padding: 10%;
 
                     &--value {
+                        color: $valueColor;
                         display: block;
-                        font-size: 2em;
+                        font-size: $fontSize;
 
                     }
                 }

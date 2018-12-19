@@ -1,28 +1,50 @@
-.theme {
+.retro-theme {
     .user-controls {
         z-index: 100;
         bottom: 0;
         text-align: center;
         width: 100%;
-        background: #0d0a1b;
-        padding-top: 5%;
+        background: #84968d;
+        background: linear-gradient(0deg, #000000, #171717);
+        border-top: .4em solid #000000;
+        display: flex;
+        margin-top: -.6em;
+        position: relative;
 
         &__button {
-            padding: 5% 0%;
+            padding: 7% 0%;
             width: 19%;
-            height: 50vh;
-            margin: auto;
             display: inline-block;
             color: #908aa7;
             font-size: 2em;
+            flex: 1;
+            transition: .1s;
+
             user-select: none;
             -moz-user-select: none;
             -khtml-user-select: none;
             -webkit-user-select: none;
             -o-user-select: none;
 
+            &:before {
+                content: 'o';
+                width: 85%;
+                display: inline-block;
+                color: #464646;
+                font-size: 2em;
+                flex: 1;
+                border-radius: 50%;
+                // background: rgba(255, 235, 59, .37);
+                user-select: none;
+                -moz-user-select: none;
+                -khtml-user-select: none;
+                -webkit-user-select: none;
+                -o-user-select: none;
+                transition: .1s;
+            }
+
             &:active {
-                background-color: #27223e;
+                background-color: #3e3e3e;
             }
         }
     }

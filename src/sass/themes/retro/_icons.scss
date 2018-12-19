@@ -1,27 +1,27 @@
-.theme {
+.retro-theme {
   .icon {
     background-size: 40%;
     background-position: top;
     background-repeat: no-repeat;
 
     &-left {
-        background-image: url(../../assets/img/left.svg);
+        background-image: url(../assets/img/left.svg);
     }
     
     &-right {
-        background-image: url(../../../assets/img/right.svg);
+        background-image: url(../assets/img/right.svg);
     }
 
     &-down {
-        background-image: url(../../../assets/img/down.svg);
+        background-image: url(../assets/img/down.svg);
     }
 
     &-push {
-        background-image: url(../../../assets/img/push.svg);
+        background-image: url(../assets/img/push.svg);
     }
 
     &-rotate {
-        background-image: url(../../../assets/img/rotate.svg);
+        background-image: url(../assets/img/rotate.svg);
     }
   }
 }

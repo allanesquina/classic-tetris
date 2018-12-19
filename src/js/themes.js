@@ -1,6 +1,7 @@
 import { config } from './gameConfig';
 import SpriteSheet from '../assets/img/sprite2.png';
 import SpriteSheet2 from '../assets/img/sprite3.png';
+import SpriteSheetRetro from '../assets/img/sprite_retro.png';
 
 export const themes = {
     digitalLight: {
@@ -17,18 +18,28 @@ export const themes = {
             spriteSheet: SpriteSheet,
         },
     },
-    digitalDark: {
-        className: 'theme',
+    retro: {
+        className: 'retro-theme',
         color: {
             filled: '#C5C5C5',
             empty: '#333333',
         },
         sprite: {
-            size: 7,
-            scale: 2.3,
-            border: 2,
-            type: 'rect',
-            spriteSheet: SpriteSheet,
+            size: 27,
+            scale: .8,
+            border: 0,
+            type: 'sprite',
+            spriteSheet: SpriteSheetRetro,
+            colors: {
+                ['black']:  27,
+                ['T']: 0,
+                ['O']: 0,
+                ['I']: 0,
+                ['S']: 0,
+                ['Z']: 0,
+                ['L']: 0,
+                ['J']: 0,
+            }
         },
     },
     digitalRealistic: {

@@ -1,6 +1,7 @@
 import PubSub from '../jps';
 import GameZone from './GameZone';
 import GameObject from './GameObject';
+import Timer from './Timer';
 
 export default class Game {
   constructor(id, w, h, fps) {
@@ -9,8 +10,7 @@ export default class Game {
     this.canvas.height = h;
     this.context = this.canvas.getContext('2d');
     this.context.imageSmoothingEnabled = false;
-    this.lastTime = Date.now() / 1000;
-    this.fps = fps ? (0.013 / fps) * 60 : 0.013; // 60fps
+    this.fps = fps ? fps : 60; // 60fps
     this.stages = {};
     this.state = {
       stage: {
@@ -22,6 +22,7 @@ export default class Game {
     this.renderIsRunning = false;
     this.pressedKeys = { count: 0 };
     this.render = this.render.bind(this);
+    this.delayOf = this.delayOf.bind(this);
     this.walkThroughGameObjects = this.walkThroughGameObjects.bind(this);
 
     this.bindEvents();
@@ -44,6 +45,7 @@ export default class Game {
         getList: () => this.zone.objs,
         changeId: this.zone.changeObjectId,
       },
+      delayOf: this.delayOf,
     };
   }
 
@@ -61,25 +63,15 @@ export default class Game {
     });
   }
 
-  cicle() {
-    window.requestAnimationFrame(this.render);
-  }
-
   start() {
+    this.timer = new Timer(1/this.fps);
+    this.timer.setRenderFunction(this.render);
+    this.timer.start();
+
     this.renderIsRunning = true;
-    this.render();
   }
 
-  forceRenderAllObjectsOnce() {
-    this.forceRenderStatus = true;
-  }
-
-  render() {
-    const time = Date.now() / 1000;
-    // if (time > this.lastTime + this.fps) {
-    if (!this.isWalking) {
-
-      this.lastTime = time;
+  render(time) {
       if(this.clearCanvasEnabled) {
         this.context.clearRect(0, 0, this.state.stage.width, this.state.stage.height);
       // this.canvas.width = this.canvas.width;
@@ -88,7 +80,7 @@ export default class Game {
       this.walkThroughGameObjects((obj, i) => {
         (obj.stateToProp && obj.stateToProp(this.getGameEventObject()));
         (obj.onKeyDown && obj.onKeyDown(this.pressedKeys, this.getGameEventObject()));
-        (obj.onEnterFrame && obj.onEnterFrame(this.getGameEventObject()));
+        (obj.onEnterFrame && obj.onEnterFrame(this.getGameEventObject(), time));
 
         if(obj.shouldRender) {
           if(obj.shouldRender() || this.forceRenderStatus || this.clearCanvasEnabled) {
@@ -101,11 +93,6 @@ export default class Game {
         }
 
       });
-    }
-
-    this.forceRenderStatus = false;
-
-    this.cicle();
   }
 
   walkThroughGameObjects(fn) {
@@ -140,7 +127,7 @@ export default class Game {
       for (let i=0, l = objsKeys.length; i < l; i += 1) {
         const obj = objs[objsKeys[i]];
         if (obj) {
-          fn(obj, i);
+            fn(obj, i);
         }
       }
     }
@@ -207,6 +194,19 @@ export default class Game {
     return new GameObject(props)
   }
 
+  delayOf(time, fn) {
+    const timer = this.timer;
+    let lastTime = 0;
+
+    const func = (game) => {
+      if (timer.currentTime > (lastTime + (time * 1000))) {
+        fn(this.getGameEventObject());
+        lastTime = timer.currentTime;
+      }
+    }
+    return func;
+
+  }
 
 };
 

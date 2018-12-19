@@ -22,9 +22,6 @@ export default class Pixel extends GameObject {
     this.themeEventOff();
   }
 
-  onCollision(objs, game) {
-  }
-
   onEnterFrame(game) {
     const matrix = game.state[this.props.matrix];
     if(!matrix) { return }
@@ -34,7 +31,7 @@ export default class Pixel extends GameObject {
         this.props.color = pos.filled > 0 ? config.theme.color.filled : config.theme.color.empty;
       }
       if(config.theme.sprite.type === 'sprite') {
-        this.props.sx = pos.filled > 0 ? PIECES_SPRITE_COLORS[pos.type] : PIECES_SPRITE_COLORS['black'];
+        this.props.sx = pos.filled > 0 ? config.theme.sprite.colors[pos.type] : config.theme.sprite.colors['black'];
       }
       
     }
