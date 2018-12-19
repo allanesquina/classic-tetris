@@ -65,7 +65,7 @@ export default class Game {
 
   start() {
     this.timer = new Timer(1/this.fps);
-    this.timer.setRenderFunction(this.render);
+    this.timer.setUpdateFunction(this.render);
     this.timer.start();
 
     this.renderIsRunning = true;

@@ -20,7 +20,7 @@ export default class Timer {
         this.cicle();
     }
 
-    setRenderFunction(fn) {
+    setUpdateFunction(fn) {
         this.update = fn;
     }
 
