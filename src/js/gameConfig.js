@@ -25,5 +25,7 @@ export const config = {
         fps: 40,
     },
     skipLevelAt: 10,
-    theme: themes['retro']
+    theme: themes[1],
+    soundEffect: true,
+    music: true,
 };

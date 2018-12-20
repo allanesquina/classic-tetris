@@ -1,5 +1,6 @@
 import { config } from './gameConfig';
 import { changeTheme } from './themes';
+import { totalmem } from 'os';
 
 // Touch events by using Hammerjs
 export function TouchEvents(gameController, game) {
@@ -39,8 +40,9 @@ export function TouchEvents(gameController, game) {
         }
 
         if(ev.type === 'swipeup') {
-
-            changeTheme('digitalLight', game);
+            game.ui.actions.openPauseMenuScreen();
+            // TODO- set pause
+            return;
         }
 
         if(ev.type === 'tap') {
@@ -78,15 +80,6 @@ export function TouchEvents(gameController, game) {
         
     })
 
-    document.querySelector('#start-screen__button-start').addEventListener('click', (e) => {
-        // openFullscreen();
-        game.activeStage('playfield');
-        document.querySelector('.menu').style.display = 'none';
-    });
-
-    setTimeout(() => {
-        // document.querySelector('#start-screen__button-start').click()
-    }, 100)
 
     function resetKeys() {
         game.pressedKeys[74] = false;

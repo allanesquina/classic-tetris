@@ -6,6 +6,7 @@ import { TouchEvents } from './touchEvent';
 import { GameEvents } from './gameEvent';
 import { config } from './gameConfig';
 import { changeTheme } from './themes';
+import UI from './ui.js';
 
 export default function () {
 
@@ -24,7 +25,7 @@ export default function () {
   playField.connect(fieldController);
 
   game.event.on('theme', (theme) => {
-    createPiecesArea(playField);
+    // createPiecesArea(playField);
   });
 
   function createPiecesArea(playField) {
@@ -79,10 +80,12 @@ export default function () {
   }
 
   // Init game config
+  UI(game);
   TouchEvents(fieldController, game);
   GameEvents(game);
   createPiecesArea(playField, game);
 
+  game.ui.router.goTo('start-menu');
   // Active the menu stage
   game.activeStage(menu);
 

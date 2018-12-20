@@ -37,15 +37,7 @@ export function GameEvents(game) {
     document.querySelector('#interface-wrapper').classList.add(newTheme);
   })
 
-    document.querySelector('#gameover-screen__restart-button').addEventListener('click', (e) => {
-      // openFullscreen();
-      game.activeStage('playfield');
-      game.event.emit('reset');
-      document.querySelector('#gameover-screen').style.display = 'none';
-    });
-
   game.event.on('gameover', () => {
-    game.activeStage('menu');
-    document.querySelector('#gameover-screen').style.display = 'block';
+    game.ui.actions.openGameoverScreen();
   })
 }

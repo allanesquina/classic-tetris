@@ -1,0 +1,59 @@
+<div data-screen="options-menu" class="options-menu-screen" id="options-menu-screen">
+  <h1 class="options-menu-screen__title">
+    Game Options
+  </h1>
+  <div class="options-menu-screen__option">
+    <div class="options-menu-screen__option__label-wrapper">
+      <span> Theme </span>
+      <label>
+        <select
+          name="theme"
+          data-app="option:select"
+          data-select-action="changeTheme"
+        >
+          <option name="retro" value="retro">Retro Theme</option>
+          <option name="digital" value="digital">Digital Theme</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="options-menu-screen__option">
+    <div class="options-menu-screen__option__label-wrapper">
+      <span> Sound Effects </span>
+      <label>
+        <input
+          class="options-menu-screen__toggle"
+          type="checkbox"
+          data-app="option:check"
+          name="soundEffect"
+          value="1"
+        />
+      </label>
+    </div>
+  </div>
+
+  <div class="options-menu-screen__option">
+    <div class="options-menu-screen__option__label-wrapper">
+      <span> Music </span>
+      <label>
+        <input
+          class="options-menu-screen__toggle"
+          id="options-menu-screen__toggle-music"
+          type="checkbox"
+          data-app="option:check"
+          name="music"
+          value="1"
+        />
+      </label>
+    </div>
+  </div>
+  <div class="options-menu-screen__option">
+    <button
+      class="options-menu-screen__button"
+      data-action="goBack"
+    >
+      Back
+    </button>
+  </div>
+</div>

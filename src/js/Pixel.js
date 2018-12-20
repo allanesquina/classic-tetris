@@ -14,7 +14,7 @@ export default class Pixel extends GameObject {
 
   onInit(game) {
     this.themeEventOff = game.event.on('theme', () => {
-      this.disconnect();
+      this.props.type = config.theme.sprite.type;
     });
   }
 
@@ -44,6 +44,7 @@ export default class Pixel extends GameObject {
 
     return this.lastProps.sx != this.props.sx || 
       this.props.color != this.lastProps.color || 
-      this.props.y != this.lastProps.y;
+      this.props.y != this.lastProps.y ||
+      this.props.type != this.lastProps.type;
   }
 }
