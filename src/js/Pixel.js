@@ -12,18 +12,10 @@ export default class Pixel extends GameObject {
     this.isAnimating = false;
   }
 
-  onInit(game) {
-    this.themeEventOff = game.event.on('theme', () => {
-      this.props.type = config.theme.sprite.type;
-    });
-  }
-
-  onDestroy() {
-    this.themeEventOff();
-  }
-
   onEnterFrame(game) {
     const matrix = game.state[this.props.matrix];
+    this.props.type = config.theme.sprite.type;
+
     if(!matrix) { return }
     if (matrix[this.props.refY] && matrix[this.props.refY][this.props.refX]) {
       const pos = matrix[this.props.refY][this.props.refX];

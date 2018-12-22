@@ -2,7 +2,11 @@ import './vendor/hammer.min';
 import app from './app';
 
 // App bootstrap
-app();
+window.onload = function() {
+    setTimeout(() => {
+        app();
+    }, 500);
+}
 
 
 

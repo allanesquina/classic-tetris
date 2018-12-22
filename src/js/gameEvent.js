@@ -20,17 +20,6 @@ export function GameEvents(game) {
    $next.appendChild(tmpImg);
   });
 
-  game.event.on('score', (val) => {
-    $score.innerHTML = val;
-  })
-
-  game.event.on('level', (val) => {
-    $level.innerHTML = val;
-  })
-
-  game.event.on('line', (val) => {
-    $lines.innerHTML = val;
-  })
 
   game.event.on('theme', (newTheme, lastTheme) => {
     document.querySelector('#interface-wrapper').classList.remove(lastTheme);

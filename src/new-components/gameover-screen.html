@@ -1,33 +1,34 @@
-<div data-screen="gameover" class="gameover-screen" id="gameover-screen">
+<div data-screen="gameover" class="gameover-screen hide" id="gameover-screen">
+  <h1 class="gameover-screen__title">Game Over</h1>
+
   <div class="gameover-screen__gameinfo">
+    <div class="gameover-screen__option">
+      <div class="gameover-screen__option__label-wrapper">
+        <span> Score </span> <span name="score" data-app="text"></span>
+      </div>
+    </div>
 
-    <h1>score</h1>
+    <div class="gameover-screen__option">
+      <div class="gameover-screen__option__label-wrapper">
+        <span> Lines </span> <span name="lines" data-app="text"></span>
+      </div>
+    </div>
 
-    <span 
-      class="gameover-screen__gameinfo__score" 
-      id="gameover-screen__gameinfo__score"
-      ></span>
-
-    <h1>lines</h1>
-
-    <span 
-      class="gameover-screen__gameinfo__lines" 
-      id="gameover-screen__gameinfo__lines">
-    </span>
-
-    <h1>level</h1>
-
-    <span 
-      class="gameover-screen__gameinfo__level" 
-      id="gameover-screen__gameinfo__level">
-    </span>
-
+    <div class="gameover-screen__option">
+      <div class="gameover-screen__option__label-wrapper">
+        <span> Level </span> <span name="level" data-app="text"></span>
+      </div>
+    </div>
   </div>
 
-  <button 
-    class="gameover-screen__restart-button" 
-    data-action="restartGame"
-  >
-    restart game
-  </button>
+  <div class="gameover-screen__option">
+    <button class="gameover-screen__restart-button" data-action="startGame">
+      Restart Game
+    </button>
+    <button 
+      class="gameover-screen__restart-button" 
+      data-action="openStartMenuScreen">
+      Quit
+    </button>
+  </div>
 </div>

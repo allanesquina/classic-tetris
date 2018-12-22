@@ -2,11 +2,8 @@
   .options-menu {
     &-screen {
 			border: 1em solid #818e87;
-      position: fixed;
       background: #a3b6ac;
 			background: linear-gradient(-174deg, #a4b6ad, #788a81);
-      top: 0;
-      right: 0;
       z-index: 500;
       display: flex;
       justify-content: center;
@@ -18,6 +15,7 @@
         margin-bottom: 1em;
         color: #000;
         text-transform: uppercase;
+        text-align: center;
       }
 
       &__option {

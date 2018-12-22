@@ -27,6 +27,7 @@ export default class Game {
 
     this.bindEvents();
     this.event = new PubSub();
+    this.setState = this.setState.bind(this);
   }
 
   getGameEventObject() {
@@ -85,7 +86,6 @@ export default class Game {
         if(obj.shouldRender) {
           if(obj.shouldRender() || this.forceRenderStatus || this.clearCanvasEnabled) {
             (obj.onCollision && obj.onCollision(this.collisionCalc(obj, i), this.getGameEventObject()));
-            console.log(obj.props.name)
             obj.render(this.context, this.state, this);
           }
         } else {

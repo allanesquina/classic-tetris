@@ -8,9 +8,6 @@ export default function(game) {
   const SCREENS = new Map();
 
   const UI_ACTIONS = {
-    togglePause: () => {
-      console.log("toggle");
-    },
     changeTheme: e => {
       const target = e.target;
       changeTheme(target.selectedIndex, game);
@@ -19,18 +16,26 @@ export default function(game) {
       router.goTo('options-menu');
     },
     openPauseMenuScreen: e => {
+      game.event.emit('musicState', false);
+      game.setState({ gamePaused: true });
       router.goTo('pause-menu');
     },
-    openPlayfieldScreen: e => {
-      game.activeStage('playfield');
-      game.event.emit('reset');
-      router.goTo('playfield');
+    closePauseMenuScreen: e => {
+      game.event.emit('musicState', true);
+      game.setState({ gamePaused: false });
+      router.goBack();
     },
     openGameoverScreen: e => {
       router.goTo('gameover');
       game.activeStage('menu');
+      game.event.emit('musicState', false);
     },
-    restartGame: e => {
+    openStartMenuScreen: e => {
+      router.goTo('start-menu');
+      game.activeStage('menu');
+      game.event.emit('musicState', false);
+    },
+    startGame: e => {
       game.activeStage('playfield');
       game.event.emit('reset');
       router.goTo('playfield');
@@ -49,6 +54,7 @@ export default function(game) {
         const target = e.target;
         const value = target.checked;
         config[name] = value;
+        game.event.emit('options:update');
       });
     },
     ["option:select"]: (el, name) => {
@@ -61,7 +67,16 @@ export default function(game) {
 
       el.addEventListener("change", e => {
         UI_ACTIONS[action] && UI_ACTIONS[action](e);
+        game.event.emit('options:update');
       });
+    },
+    ["text"]: (el, name) => {
+      // Sync values from state
+      el.innerHTML = game.state[name] || '';
+
+      game.event.on('updateState', (value) => {
+        el.innerHTML = value[name];
+      })
     }
   };
 
@@ -82,8 +97,8 @@ export default function(game) {
   });
 
   appScreens.forEach(el => {
-    const screen = el.getAttribute("data-screen");
-    SCREENS.set(screen, new Screen(el));
+    const screenName = el.getAttribute("data-screen");
+    SCREENS.set(screenName, new Screen(screenName, el));
   });
 
   const router = new Router(SCREENS);
@@ -99,43 +114,55 @@ class Router {
   constructor(screenList) {
     this.screen = screenList;
     this.history = [];
+    this.browserHistory = window.history;
+    this.bindEvent();
+  }
+
+  bindEvent() {
+    window.onpopstate = (event) => {
+      this.closeAllScreen();
+      this.history[event.state.name].show();
+    };
+  }
+
+  closeAllScreen() {
+    this.screen.forEach((s) => {
+      s.hide();
+    })
   }
 
   goTo(name) {
     const screen = this.screen.get(name);
 
-    if(this.current) {
-      this.current.hide();
-      this.setHistory(this.current);
-    }
+    this.closeAllScreen();
 
+    this.setHistory(screen);
     screen.show();
-    this.current = screen;
   }
 
   goBack() {
-    const last = this.history.pop();
-    this.current.hide();
-
-    if(last) {
-      last.show();
-      this.current = last;
-    }
+    this.browserHistory.back();
   }
 
   setHistory(screen) {
-    this.history.push(screen);
+    this.history[screen.name] = screen;
+    this.browserHistory.pushState({name: screen.name}, screen.name);
   }
 }
 
 class Screen {
-  constructor(el) {
+  constructor(name, el) {
+    console.log(el)
     this.el = el;
     this.el.classList.add('screen');
+    this.el.classList.remove('hide');
+    this.name = name;
   }
 
   show() {
-    this.el.classList.add('screen--visible');
+    setTimeout(() => {
+      this.el.classList.add('screen--visible');
+    }, 0);
   }
 
   hide() {

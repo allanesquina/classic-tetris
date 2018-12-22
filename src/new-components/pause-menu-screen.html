@@ -1,4 +1,4 @@
-<div data-screen="pause-menu" class="options-menu-screen" id="options-menu-screen">
+<div data-screen="pause-menu" class="options-menu-screen hide" id="options-menu-screen">
   <h1 class="options-menu-screen__title">
     Game Paused
   </h1>
@@ -11,15 +11,20 @@
     </button>
     <button
       class="options-menu-screen__button"
-      data-action="restartGame"
+      data-action="startGame"
     >
       Reset
     </button>
     <button
       class="options-menu-screen__button"
-      data-action="goBack"
+      data-action="closePauseMenuScreen"
     >
       Continue
+    </button>
+    <button 
+      class="options-menu-screen__restart-button" 
+      data-action="openStartMenuScreen">
+      Quit
     </button>
   </div>
 </div>

@@ -47,14 +47,19 @@ body {
   font-size: 12px;
   overflow: hidden;
 }
+.hide {
+  display: none !important;
+}
 
 .screen {
+  display: block;
   position: fixed;
   visibility: hidden;
   transition:  .3s;
-  transform: translateY(4%) scale(1.2);
+  // transform: translateY(4%) scale(1.2);
+  transform: translateY(4%);
   opacity: 0;
-  filter: blur(15px);
+  // filter: blur(2px);
 
   width: 100%;
   height: 100%;
@@ -67,7 +72,8 @@ body {
   &--visible {
     visibility: visible;
     opacity: 1;
-    transform: translateY(0%) scale(1) ;
-    filter: blur(0px);
+    // transform: translateY(0%) scale(1) ;
+    transform: translateY(0%) ;
+    // filter: blur(0px);
   }
 }

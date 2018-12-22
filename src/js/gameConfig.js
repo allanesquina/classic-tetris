@@ -15,11 +15,12 @@ export const config = {
         height: 3,
     },
     initialState: {
-        score: `0`, 
-        lines: `0`, 
-        level: `1`, 
+        score: 0, 
+        lines: 0, 
+        level: 1, 
         matrix: [],
         control: { down: false },
+        gamePaused: false,
     },
     render: {
         fps: 40,
