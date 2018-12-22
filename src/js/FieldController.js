@@ -8,7 +8,7 @@ import DropAudioSrc from "../assets/audio/drop.ogg";
 import MoveAudioSrc from "../assets/audio/move.wav";
 import RotateAudioSrc from "../assets/audio/rotate.wav";
 import Yeah from "../assets/audio/yeah.mp3";
-import Music from "../assets/audio/music-retro.mp3";
+import Music from "../assets/audio/music-digital.mp3";
 import pieces from "./pieces";
 import { config } from "./gameConfig";
 import { PIECES_SPRITE_COLORS, PIECES_TYPES } from "./enum";

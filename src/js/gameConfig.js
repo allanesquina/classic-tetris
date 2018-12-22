@@ -26,7 +26,7 @@ export const config = {
         fps: 40,
     },
     skipLevelAt: 10,
-    theme: themes[1],
+    theme: themes[0],
     soundEffect: true,
     music: true,
 };

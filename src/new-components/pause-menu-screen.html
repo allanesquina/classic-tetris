@@ -1,28 +1,28 @@
-<div data-screen="pause-menu" class="options-menu-screen hide" id="options-menu-screen">
-  <h1 class="options-menu-screen__title">
+<div data-screen="pause-menu" class="hide" id="screen">
+  <h1 class="screen__title">
     Game Paused
   </h1>
-  <div class="options-menu-screen__option">
+  <div class="screen__option">
     <button
-      class="options-menu-screen__button"
+      class="screen__button"
+      data-action="closePauseMenuScreen"
+    >
+      Continue
+    </button>
+    <button
+      class="screen__button"
       data-action="openOptionsMenuScreen"
     >
       Options
     </button>
     <button
-      class="options-menu-screen__button"
+      class="screen__button"
       data-action="startGame"
     >
       Reset
     </button>
-    <button
-      class="options-menu-screen__button"
-      data-action="closePauseMenuScreen"
-    >
-      Continue
-    </button>
     <button 
-      class="options-menu-screen__restart-button" 
+      class="screen__restart-button" 
       data-action="openStartMenuScreen">
       Quit
     </button>

@@ -15,17 +15,18 @@
       justify-content: flex-end;
       align-items: center;
       position: relative;
-      border: .12em solid #000;
+      border: .12em solid #262f47;
       border-radius: 13px;
       transition: .2s;
       transform: translateY(-50%);
       box-shadow: 0 0 6px 0px rgba(0, 0, 0, 0.67);
-      background: linear-gradient(50deg, #8c9e95, #919895);
+      background: linear-gradient(50deg, #1e2233, #181c30);
       
       &:after {
         content: 'OFF';
         display: block;
         padding: .3em;
+        color: #5e6273;
       }
     }
     
@@ -34,7 +35,7 @@
       width: 3em;
       height: 3em;
       border-radius: 50%;
-      border: .12em solid #000;
+      border: .12em solid #262f47;
       background: #888;
       position: absolute;
       top: 0;
@@ -42,7 +43,7 @@
       transition: .2s;
       transform: translateX(-40%) translateY(-50%);
       box-shadow: 0 0 6px 0px rgba(0, 0, 0, 0.67);
-      background: linear-gradient(20deg, #899b92, #90a299);
+      background: linear-gradient(20deg, #181d30, #181d30);
       
       &:after {
         content: ''; 
@@ -50,7 +51,7 @@
         width: 2.6em;
         height: 2.6em;
         border-radius: 50%;
-        border: .1em solid #a2b5ab;
+        border: .1em solid #090b0d;
         font-size: 1em;
         margin: .1em;
       }
@@ -63,21 +64,24 @@
     input:checked + &__content {
       .toggle__circle {
         transform: translateX(85%) translateY(-50%);
-        background: linear-gradient(20deg, #428e68, #90f1be);
+        background: linear-gradient(20deg, #5b74bd, #3a4c81);
+        border-color: #222b46;
         
         &:after {
-          border: .1em solid #87bda1;
+          border: .1em solid #8b9de4;
         }
       }
       
       .toggle__bar {
         color: #fff;
-        background: #15271e;
+        background: #374982;
         justify-content: flex-start;
+        border-color: #7583bb;
         
         &:after {
           content: 'ON';
           text-shadow: 0 0px 4px rgba(255, 255, 255, 0.8784313725490196); 
+          color: #fff;
         }
       }
     }
