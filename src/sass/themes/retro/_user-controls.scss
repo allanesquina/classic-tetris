@@ -18,7 +18,7 @@
             color: #908aa7;
             font-size: 2em;
             flex: 1;
-            transition: .1s;
+            min-height: 60px;
 
             user-select: none;
             -moz-user-select: none;
@@ -26,25 +26,40 @@
             -webkit-user-select: none;
             -o-user-select: none;
 
-            &:before {
-                content: 'o';
-                width: 85%;
-                display: inline-block;
-                color: #464646;
-                font-size: 2em;
-                flex: 1;
-                border-radius: 50%;
-                // background: rgba(255, 235, 59, .37);
-                user-select: none;
-                -moz-user-select: none;
-                -khtml-user-select: none;
-                -webkit-user-select: none;
-                -o-user-select: none;
-                transition: .1s;
+            svg {
+                width: 35%;
+                fill-opacity: .2;
+                pointer-events: none;
             }
 
             &:active {
-                background-color: #3e3e3e;
+                background-color: #111;
+                svg {
+                    fill-opacity: .7;
+                }
+            }
+            &--rotate {
+                svg {
+                    width: 45%;
+                }
+            }
+
+            &--down {
+                svg {
+                    transform: rotate(90deg);
+                }
+            }
+            &--left {
+                svg {
+                    transform: rotate(180deg);
+                }
+            }
+
+            &--push {
+                svg {
+                    transform: rotate(90deg);
+                    width: 50%;
+                }
             }
         }
     }

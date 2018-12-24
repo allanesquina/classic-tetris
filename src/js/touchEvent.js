@@ -6,7 +6,19 @@ import { totalmem } from 'os';
 export function TouchEvents(gameController, game) {
     var myElement = document.getElementById('playfield-screen');
     var hammertime = new Hammer(myElement, {});
-    var buttons = document.querySelectorAll('.user-controls__button');
+
+    function resetKeys() {
+        game.pressedKeys[74] = false;
+        game.pressedKeys[72] = false;
+        game.pressedKeys[75] = false;
+        game.pressedKeys[76] = false;
+        game.pressedKeys[39] = false;
+        game.pressedKeys[37] = false;
+        game.pressedKeys[40] = false;
+        game.pressedKeys[38] = false;
+        game.pressedKeys[32] = false;
+        game.pressedKeys.isPressed = false;
+    }
 
     hammertime.get('swipe')
     .set({ 
@@ -52,45 +64,4 @@ export function TouchEvents(gameController, game) {
 
         gameController._movePiece(keys, game.getGameEventObject())
     });
-
-    buttons.forEach((button) => {
-        var hammertimebtn = new Hammer(button, {});
-
-        hammertimebtn.on('press', function(e) {
-        resetKeys();
-        var key = e.target.getAttribute('data-key');
-        game.pressedKeys[key] = e;
-        game.pressedKeys.isPressed = true;
-        });
-
-        hammertimebtn.on('pressup', function(e) {
-        resetKeys();
-        var key = e.target.getAttribute('data-key');
-        game.pressedKeys[key] = false;
-        game.pressedKeys.isPressed = false;
-        });
-
-        button.addEventListener('click', (e) => {
-        resetKeys();
-        var keys = {};
-        var key = e.target.getAttribute('data-key');
-        keys[key]=true;
-        gameController._movePiece(keys, game.getGameEventObject())
-        });
-        
-    })
-
-
-    function resetKeys() {
-        game.pressedKeys[74] = false;
-        game.pressedKeys[72] = false;
-        game.pressedKeys[75] = false;
-        game.pressedKeys[76] = false;
-        game.pressedKeys[39] = false;
-        game.pressedKeys[37] = false;
-        game.pressedKeys[40] = false;
-        game.pressedKeys[38] = false;
-        game.pressedKeys[32] = false;
-        game.pressedKeys.isPressed = false;
-    }
 }

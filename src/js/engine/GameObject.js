@@ -39,7 +39,7 @@ export default class GameObject {
         break;
       case 'sprite':
         if(!game.clearCanvasEnabled) {
-          ctx.clearRect(this.lastProps.x-1, this.lastProps.y-1, this.lastProps.w+2, this.lastProps.h+2);
+          ctx.clearRect(this.lastProps.x, this.lastProps.y, this.lastProps.w, this.lastProps.h);
         }
         const { w, h, x, y, sw, sh } = this.props;
         ctx.drawImage(

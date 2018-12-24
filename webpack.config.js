@@ -78,17 +78,21 @@ const webpackConfig = {
           },
         ],
       },
+      // {
+      //   test: /\.svg$/,
+      //   use: [{
+      //     loader: 'svg-url-loader',
+      //     options: {
+      //       limit: 8192,
+      //       noquotes: true,
+      //       name: '[name].[ext]',
+      //       outputPath: 'assets/',
+      //     },
+      //   }],
+      // },
       {
         test: /\.svg$/,
-        use: [{
-          loader: 'svg-url-loader',
-          options: {
-            limit: 8192,
-            noquotes: true,
-            name: '[name].[ext]',
-            outputPath: 'assets/',
-          },
-        }],
+        use: 'raw-loader'
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf|mp4)$/,

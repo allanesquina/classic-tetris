@@ -13,12 +13,22 @@ body {
         &-screen {
             background: #a4b6ad;
             background: linear-gradient(174deg, #a4b6ad, #9faca6);
+
+            background: #000;
+
             position: relative;
             width: 100%;
-            margin: auto;
             display: flex;
             flex-direction: row-reverse;
             border-top: .4em solid #000;
+
+            &-wrapper {
+                &:after {
+                    display: none; 
+
+                }
+                justify-content: flex-start;
+            }
 
             &__canvas-wrapper {
                 padding-left: 1%;
@@ -46,7 +56,6 @@ body {
                 text-align: center;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-around;
                 padding: 5% 0;
 
                 &__score {

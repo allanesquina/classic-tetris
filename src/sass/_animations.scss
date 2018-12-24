@@ -1,1 +1,58 @@
 @import 'themes/retro/animations';
+
+@keyframes btn-active { 
+	0%{
+			background-color: rgba(66, 85, 173, 0.1);
+	}
+	5%{
+			background-color: rgba(66, 85, 173, 0.4);
+	}
+	10%{
+			background-color: rgba(66, 85, 173, 0.2);
+	}
+	15%{
+			background-color: rgba(66, 85, 173, 0.1);
+	}
+	40%{
+			background-color: rgba(66, 85, 173, 0.6);
+	}
+	50%{
+			background-color: rgba(66, 85, 173, 0.2);
+	}
+	100%{
+			background-color: rgba(66, 85, 173, 0.1);
+	}
+}
+
+@keyframes bganim { 
+	0%{
+			background-position-x: 66%;
+			background-position-y: 56%;
+			opacity: .04;
+	}
+	2%{
+			background-position-x: 14%;
+			background-position-y: 26%;
+			opacity: .1;
+	}
+	3%{
+			background-position-x: 76%;
+			background-position-y: 16%;
+			opacity: .14;
+	}
+	4%{
+			background-position-x: 56%;
+			background-position-y: 46%;
+			opacity: .1;
+	}
+	10%{
+			background-position-x: 66%;
+			background-position-y: 36%;
+			opacity: 0;
+	}
+	100%{
+			background-position-x: 66%;
+			background-position-y: 46%;
+			opacity: .1;
+	}
+}

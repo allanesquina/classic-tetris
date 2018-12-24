@@ -23,7 +23,7 @@ export const config = {
         gamePaused: false,
     },
     render: {
-        fps: 40,
+        fps: 30,
     },
     skipLevelAt: 10,
     theme: themes[0],

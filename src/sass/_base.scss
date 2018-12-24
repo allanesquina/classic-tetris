@@ -32,6 +32,10 @@ body {
   box-sizing: border-box;
 }
 
+textarea:focus, input:focus, button:focus {
+  outline: none;
+}
+
 .container {
   padding-right: 15px;
   padding-left: 15px;

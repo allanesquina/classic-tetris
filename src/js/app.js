@@ -38,6 +38,7 @@ export default function () {
 
     for (let i = 0, l = config.matrix.height-2; i < l; i++) {
       for (let j = 0, y = config.matrix.width; j < y; j++) {
+        console.log((i * (pixelWidth + border)))
         playField.connect(new Pixel({
           name: `Piece-${i+2}-${j}`,
           id: `Piece-${i+2}-${j}`,
@@ -80,7 +81,7 @@ export default function () {
   }
 
   // Init game config
-  UI(game);
+  UI(game, fieldController);
   TouchEvents(fieldController, game);
   GameEvents(game);
   createPiecesArea(playField, game);

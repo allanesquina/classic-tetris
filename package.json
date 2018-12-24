@@ -47,6 +47,7 @@
     "webpack-s3-plugin": "^1.0.0-rc.0"
   },
   "dependencies": {
-    "jquery": "^3.3.1"
+    "jquery": "^3.3.1",
+    "raw-loader": "^1.0.0"
   }
 }

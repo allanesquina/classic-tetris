@@ -1,9 +1,34 @@
 import { config } from "./gameConfig";
 import { changeTheme } from "./themes";
+// ---> svg
+import arrowSvg from '../assets/img/arrow.svg';
+import rotateSvg from '../assets/img/rotate.svg';
+import pushSvg from '../assets/img/push.svg';
 
-export default function(game) {
+const SVG = new Map();
+SVG.set('arrow', arrowSvg);
+SVG.set('rotate', rotateSvg);
+SVG.set('push', pushSvg);
+
+// ---<svg
+
+
+export default function(game, gameController) {
   const appElements = document.querySelectorAll("[data-app]");
   const appScreens = document.querySelectorAll("[data-screen]");
+
+    function resetKeys() {
+        game.pressedKeys[74] = false;
+        game.pressedKeys[72] = false;
+        game.pressedKeys[75] = false;
+        game.pressedKeys[76] = false;
+        game.pressedKeys[39] = false;
+        game.pressedKeys[37] = false;
+        game.pressedKeys[40] = false;
+        game.pressedKeys[38] = false;
+        game.pressedKeys[32] = false;
+        game.pressedKeys.isPressed = false;
+    }
 
   const SCREENS = new Map();
 
@@ -43,7 +68,48 @@ export default function(game) {
     goBack: e => {
       router.goBack();
     },
+    userControlTouch: (e, el) => {
+      const key = el.getAttribute('data-key');
+      if(e.type === 'click') {
+        resetKeys();
+        const keys = {};
+        keys[key]=true;
+        gameController._movePiece(keys, game.getGameEventObject())
+      } else if(e.type === 'press') {
+        game.pressedKeys[key] = true;
+        game.pressedKeys.isPressed = true;
+      } else {
+        game.pressedKeys[key] = false;
+        game.pressedKeys.isPressed = false;
+      }
+    },
   };
+
+    // buttons.forEach((button) => {
+    //     var hammertimebtn = new Hammer(button, {});
+
+    //     hammertimebtn.on('press', function(e) {
+    //     resetKeys();
+    //     var key = e.target.getAttribute('data-key');
+    //     game.pressedKeys[key] = e;
+    //     game.pressedKeys.isPressed = true;
+    //     });
+
+    //     hammertimebtn.on('pressup', function(e) {
+    //     resetKeys();
+    //     var key = e.target.getAttribute('data-key');
+    //     game.pressedKeys[key] = false;
+    //     game.pressedKeys.isPressed = false;
+    //     });
+
+    //     button.addEventListener('click', (e) => {
+    //     resetKeys();
+    //     var keys = {};
+    //     var key = e.target.getAttribute('data-key');
+    //     keys[key]=true;
+    //     gameController._movePiece(keys, game.getGameEventObject())
+    //     });
+        
 
   const APPLICATION_TYPES = {
     ["option:check"]: (el, name) => {
@@ -77,18 +143,40 @@ export default function(game) {
       game.event.on('updateState', (value) => {
         el.innerHTML = value[name];
       })
+    },
+    ["icon"]: (el, name) => {
+      el.innerHTML = SVG.get(name);
+
+      // game.event.on('updateState', (value) => {
+      //   el.innerHTML = value[name];
+      // })
     }
   };
 
   // Event Delegation
-  ["touch", "click"].forEach(eventType => {
+  ["click"].forEach(eventType => {
     document.addEventListener(eventType, e => {
       e.stopImmediatePropagation();
       const el = e.target;
       const action = el.getAttribute("data-action");
-      UI_ACTIONS[action] && UI_ACTIONS[action](e);
+      UI_ACTIONS[action] && UI_ACTIONS[action](e, el);
     });
   });
+
+  var touchDelegation = new Hammer(document, {});
+
+  touchDelegation.on('press pressup', function(e) {
+    e.preventDefault();
+    const el = e.target;
+    const action = el.getAttribute("data-action");
+    UI_ACTIONS[action] && UI_ACTIONS[action](e, el);
+
+  // resetKeys();
+  // var key = e.target.getAttribute('data-key');
+  // game.pressedKeys[key] = e;
+  // game.pressedKeys.isPressed = true;
+  });
+
 
   appElements.forEach(el => {
     const appType = el.getAttribute("data-app");
@@ -162,10 +250,12 @@ class Screen {
   show() {
     setTimeout(() => {
       this.el.classList.add('screen--visible');
-    }, 0);
+    }, 300);
   }
 
   hide() {
-    this.el.classList.remove('screen--visible');
+    setTimeout(() => {
+      this.el.classList.remove('screen--visible');
+    }, 300);
   }
 }
